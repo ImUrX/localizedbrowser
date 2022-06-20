@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[41,)"
+issueTrackerURL = "https://github.com/ImUrX/localizedbrowsing/issues"
+license = "MIT OR Apache-2.0"
+
+[[mods]]
+modId = "interrecipebrowser"
+version = "${version}"
+displayName = "Localized Browsing"
+authors = "ImUrX"
+description = '''
+Let's you search without using any graphemes!
+'''
+#logoFile = "icon.png"
+
+[[dependencies.examplemod]]
+modId = "forge"
+mandatory = true
+versionRange = "[41,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.examplemod]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19,)"
+ordering = "NONE"
+side = "BOTH"

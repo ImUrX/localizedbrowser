@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.github.interrecipebrowser.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "client": [
+    "MixinMinecraftClient"
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
