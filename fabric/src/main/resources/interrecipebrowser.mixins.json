@@ -1,8 +1,10 @@
 {
   "required": true,
-  "package": "io.github.interrecipebrowser.mixin.fabric",
+  "package": "io.github.interrecipebrowser.fabric.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
+    "MixinMinecraftClientFabric",
+    "MixinCreativeInventoryScreenFabric"
   ],
   "mixins": [
   ],

@@ -10,9 +10,9 @@ architectury {
 subprojects {
     apply plugin: "dev.architectury.loom"
 
-    loom {
-        silentMojangMappingsLicense()
-    }
+    //loom {
+        //silentMojangMappingsLicense()
+    //}
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
