@@ -13,14 +13,14 @@ Let's you search without using any graphemes!
 '''
 #logoFile = "icon.png"
 
-[[dependencies.examplemod]]
+[[dependencies.interrecipebrowser]]
 modId = "forge"
 mandatory = true
 versionRange = "[41,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
+[[dependencies.interrecipebrowser]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.19,)"
