@@ -14,7 +14,7 @@
     "email": "urielfontan2002@gmail.com"
   },
   "license": "MIT OR Apache-2.0",
-  "icon": "assets/interrecipebrowser/icon.png",
+  "icon": "icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [
