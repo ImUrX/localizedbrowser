@@ -26,10 +26,3 @@ mandatory = true
 versionRange = "[1.19,)"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.interrecipebrowser]]
-modId = "kotlinforforge"
-mandatory = false
-versionRange = "[3.5,)"
-ordering = "NONE"
-side = "BOTH"
