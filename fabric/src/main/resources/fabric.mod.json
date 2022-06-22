@@ -27,5 +27,8 @@
   ],
   "depends": {
     "minecraft": ">=1.19"
+  },
+  "recommends": {
+    "fabric-language-kotlin": ">=1.8.0+kotlin.1.7.0"
   }
 }

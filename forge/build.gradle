@@ -28,6 +28,9 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     //modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
+    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.4.32"
+    forgeRuntimeLibrary "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
+    shadowCommon "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }

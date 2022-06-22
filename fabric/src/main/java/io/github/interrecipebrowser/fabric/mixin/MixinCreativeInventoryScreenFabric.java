@@ -13,6 +13,6 @@ public class MixinCreativeInventoryScreenFabric {
             at = @At(value = "INVOKE", target = "Ljava/lang/String;isEmpty()Z")
     )
     private String mixinString(String original) {
-        return InterRecipeBrowser.removeDiacritics(original);
+        return InterRecipeBrowser.simplifyGraphemes(original);
     }
 }

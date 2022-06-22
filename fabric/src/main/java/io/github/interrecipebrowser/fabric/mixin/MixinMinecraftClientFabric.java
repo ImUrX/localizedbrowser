@@ -14,6 +14,6 @@ import java.util.stream.Stream;
 public class MixinMinecraftClientFabric {
     @Inject(at = @At("TAIL"), method = "method_1485", cancellable = true)
     private static void mapItemTooltip(ItemStack stack, CallbackInfoReturnable<Stream<String>> cir) {
-        cir.setReturnValue(cir.getReturnValue().map(InterRecipeBrowser::removeDiacritics));
+        cir.setReturnValue(cir.getReturnValue().map(InterRecipeBrowser::simplifyGraphemes));
     }
 }

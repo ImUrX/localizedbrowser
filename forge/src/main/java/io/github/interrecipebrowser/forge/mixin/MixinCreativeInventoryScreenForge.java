@@ -14,7 +14,7 @@ public class MixinCreativeInventoryScreenForge {
             name = "search"
     )
     private String mixinNonSearchString(String original) {
-        return InterRecipeBrowser.removeDiacritics(original);
+        return InterRecipeBrowser.simplifyGraphemes(original);
     }
 
     @ModifyVariable(
@@ -23,6 +23,6 @@ public class MixinCreativeInventoryScreenForge {
             name = "s"
     )
     private String mixinSearchString(String original) {
-        return InterRecipeBrowser.removeDiacritics(original);
+        return InterRecipeBrowser.simplifyGraphemes(original);
     }
 }
