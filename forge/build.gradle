@@ -29,7 +29,7 @@ dependencies {
     //modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
     forgeRuntimeLibrary "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
-    shadowCommon "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
+    shadowCommon "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
