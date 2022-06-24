@@ -4,7 +4,9 @@
   "compatibilityLevel": "JAVA_16",
   "client": [
     "MixinMinecraftClient",
-    "MixinRecipeBookWidget"
+    "MixinRecipeBookWidget",
+    "MixinLanguageManager",
+    "MixinTextSearchProvider"
   ],
   "mixins": [
   ],

@@ -2,7 +2,9 @@ package io.github.interrecipebrowser;
 
 import dev.esnault.wanakana.core.IMEMode;
 import dev.esnault.wanakana.core.Wanakana;
-import net.minecraft.client.MinecraftClient;
+import io.github.interrecipebrowser.mixin.MixinLanguageManager;
+import net.minecraft.client.resource.language.LanguageDefinition;
+import net.minecraft.client.resource.language.LanguageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,18 +13,17 @@ import java.text.Normalizer;
 public class InterRecipeBrowser {
     public static final String MOD_ID = "interrecipebrowser";
     private static final Logger LOGGER = LoggerFactory.getLogger("Localized Browser");
+    private static String currentLanguageCode = LanguageManager.DEFAULT_LANGUAGE_CODE;
 
     public static String simplifyGraphemes(String string) {
-        boolean romaji;
-        if ((romaji = Wanakana.isRomaji(string)) || Wanakana.isJapanese(string)) {
+        if (Wanakana.isJapanese(string)) {
             string = simplifyKana(string);
-            if (romaji) return string;
         }
         return removeDiacritics(string);
     }
 
     public static String simplifyKana(String string) {
-        return Wanakana.toHiragana(string, IMEMode.TO_HIRAGANA);
+        return Wanakana.toHiragana(string);
     }
 
     public static String removeDiacritics(String string) {
@@ -32,5 +33,13 @@ public class InterRecipeBrowser {
 
     public static void init() {
         LOGGER.info("I now exist");
+    }
+
+    public static String getCurrentLanguageCode() {
+        return currentLanguageCode;
+    }
+
+    public static void setCurrentLanguageCode(String currentLanguageCode) {
+        InterRecipeBrowser.currentLanguageCode = currentLanguageCode;
     }
 }
