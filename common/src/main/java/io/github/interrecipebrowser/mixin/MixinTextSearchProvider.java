@@ -34,18 +34,47 @@ public class MixinTextSearchProvider<T> implements TextSearchProviderAccess {
 
     @Redirect(method = "reload", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/search/TextSearcher;of(Ljava/util/List;Ljava/util/function/Function;)Lnet/minecraft/client/search/TextSearcher;"))
     private TextSearcher<T> onReload(List<T> values, Function<T, Stream<String>> textsGetter) {
-        if(this.needsNormalize) {
-            if(values.isEmpty()) return TextSearcher.of();
+        if (this.needsNormalize) {
+            if (values.isEmpty()) return TextSearcher.of();
             SuffixArray<T> suffixArray = new SuffixArray<>();
 
-            for(T object : values) {
-                (textsGetter.apply(object)).forEach(text -> suffixArray.add(object, InterRecipeBrowser.simplifyGraphemes(text).toLowerCase(Locale.ROOT)));
-            }
-            switch(InterRecipeBrowser.getCurrentLanguageCode()) {
+
+            switch (InterRecipeBrowser.getCurrentLanguageCode()) {
                 case "ja_jp":
-                    for(T object : values) {
-                        (textsGetter.apply(object)).forEach(text -> {
-                            suffixArray.add(object, Wanakana.isJapanese(text) ? InterRecipeBrowser.simplifyKana(text.toLowerCase(Locale.ROOT)) : text.toLowerCase(Locale.ROOT));
+                    for (T object : values) {
+                        textsGetter.apply(object).forEach(text -> {
+                            String lowercase = text.toLowerCase(Locale.ROOT);
+                            String base = InterRecipeBrowser.simplifyGraphemes(text).toLowerCase(Locale.ROOT);
+                            boolean isJapanese = Wanakana.isJapanese(lowercase);
+
+                            // Simplify to base letter
+                            suffixArray.add(object, base);
+
+                            // Simplify to hiragana and romaji and only if its actual japanese and if it changes when simplified
+                            if (isJapanese) {
+                                suffixArray.add(object, Wanakana.toRomaji(lowercase));
+                                if (lowercase.equals(base)) return;
+                                suffixArray.add(object, InterRecipeBrowser.simplifyKana(lowercase));
+                            }
+
+                            // Add original
+                            suffixArray.add(object, text.toLowerCase(Locale.ROOT));
+                        });
+                    }
+                    break;
+                default:
+                    for (T object : values) {
+                        textsGetter.apply(object).forEach(text -> {
+                            String lowercase = text.toLowerCase(Locale.ROOT);
+                            String base = InterRecipeBrowser.simplifyGraphemes(text).toLowerCase(Locale.ROOT);
+
+                            // Simplify to base letter
+                            suffixArray.add(object, base);
+
+                            if (!lowercase.equals(base)) {
+                                // Add original
+                                suffixArray.add(object, lowercase);
+                            }
                         });
                     }
             }

@@ -27,10 +27,10 @@ public class InterRecipeBrowser {
         switch(currentLanguageCode) {
             case "ja_jp":
                 if(Wanakana.isRomaji(string) && string.equals(string.toLowerCase(Locale.ROOT))) {
-                    return simplifyKana(string);
+                    return Wanakana.toRomaji(simplifyKana(string));
                 }
             default:
-                return simplifyGraphemes(string);
+                return string;
         }
     }
 
@@ -52,6 +52,7 @@ public class InterRecipeBrowser {
     }
 
     public static void setCurrentLanguageCode(String currentLanguageCode) {
+        LOGGER.error(currentLanguageCode);
         InterRecipeBrowser.currentLanguageCode = currentLanguageCode;
     }
 }
