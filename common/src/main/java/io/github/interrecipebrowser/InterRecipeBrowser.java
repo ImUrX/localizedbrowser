@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.Normalizer;
+import java.util.Locale;
 
 public class InterRecipeBrowser {
     public static final String MOD_ID = "interrecipebrowser";
@@ -20,6 +21,17 @@ public class InterRecipeBrowser {
             string = simplifyKana(string);
         }
         return removeDiacritics(string);
+    }
+
+    public static String romanToNative(String string) {
+        switch(currentLanguageCode) {
+            case "ja_jp":
+                if(Wanakana.isRomaji(string) && string.equals(string.toLowerCase(Locale.ROOT))) {
+                    return simplifyKana(string);
+                }
+            default:
+                return simplifyGraphemes(string);
+        }
     }
 
     public static String simplifyKana(String string) {

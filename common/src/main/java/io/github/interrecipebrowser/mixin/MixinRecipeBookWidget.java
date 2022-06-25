@@ -13,6 +13,6 @@ public class MixinRecipeBookWidget {
             at = @At(value = "INVOKE", target = "Ljava/lang/String;isEmpty()Z")
     )
     private String mixinString(String original) {
-        return InterRecipeBrowser.simplifyGraphemes(original);
+        return InterRecipeBrowser.romanToNative(original);
     }
 }
