@@ -52,7 +52,6 @@ public class InterRecipeBrowser {
     }
 
     public static void setCurrentLanguageCode(String currentLanguageCode) {
-        LOGGER.error(currentLanguageCode);
         InterRecipeBrowser.currentLanguageCode = currentLanguageCode;
     }
 }

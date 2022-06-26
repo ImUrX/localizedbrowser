@@ -15,4 +15,9 @@ public class MixinLanguageManager {
     private void onSetLanguage(LanguageDefinition language, CallbackInfo ci) {
         InterRecipeBrowser.setCurrentLanguageCode(language.getCode());
     }
+
+    @Inject(method = "<init>(Ljava/lang/String;)V", at = @At("TAIL"))
+    private void onInit(String languageCode, CallbackInfo ci) {
+        InterRecipeBrowser.setCurrentLanguageCode(languageCode);
+    }
 }
