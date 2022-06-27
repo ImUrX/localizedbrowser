@@ -4,7 +4,6 @@ import io.github.interrecipebrowser.InterRecipeBrowser;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.client.resource.language.LanguageManager;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -13,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinLanguageManager {
     @Inject(method = "setLanguage", at = @At("RETURN"))
     private void onSetLanguage(LanguageDefinition language, CallbackInfo ci) {
-        InterRecipeBrowser.setCurrentLanguageCode(language.getCode());
+        InterRecipeBrowser.instance.setCurrentLanguageCode(language.getCode());
     }
 
     @Inject(method = "<init>(Ljava/lang/String;)V", at = @At("TAIL"))
     private void onInit(String languageCode, CallbackInfo ci) {
-        InterRecipeBrowser.setCurrentLanguageCode(languageCode);
+        InterRecipeBrowser.instance.setCurrentLanguageCode(languageCode);
     }
 }

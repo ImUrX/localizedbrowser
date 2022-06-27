@@ -1,6 +1,5 @@
 package io.github.interrecipebrowser.mixin;
 
-import com.google.common.collect.ObjectArrays;
 import dev.esnault.wanakana.core.Wanakana;
 import io.github.interrecipebrowser.InterRecipeBrowser;
 import io.github.interrecipebrowser.access.TextSearchProviderAccess;
@@ -14,7 +13,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -39,7 +37,7 @@ public class MixinTextSearchProvider<T> implements TextSearchProviderAccess {
             SuffixArray<T> suffixArray = new SuffixArray<>();
 
 
-            switch (InterRecipeBrowser.getCurrentLanguageCode()) {
+            switch (InterRecipeBrowser.instance.getCurrentLanguageCode()) {
                 case "ja_jp":
                     for (T object : values) {
                         textsGetter.apply(object).forEach(text -> {

@@ -8,18 +8,19 @@ import marcono1234.gson.recordadapter.RecordTypeAdapterFactory;
 
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class KanjiDictionary {
     private final Map<String, KanjiReading> dictionary;
-    Gson gson = new GsonBuilder()
-            .registerTypeAdapterFactory(RecordTypeAdapterFactory.DEFAULT)
-            .create();
 
     KanjiDictionary(Reader file) {
-        Type type = new TypeToken<Map<String, KanjiReading>>(){}.getType();
+        Type type = new TypeToken<HashMap<String, KanjiReading>>(){}.getType();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapterFactory(RecordTypeAdapterFactory.DEFAULT)
+                .create();
         dictionary = gson.fromJson(new JsonReader(file), type);
     }
 
