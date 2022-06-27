@@ -14,3 +14,4 @@ To-do:
 ### Acknowledgements
 * [**KANJIDIC2 Project**](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project): is what I'm currently using as a kanji dictionary.
 * [**wanakana-kt**](https://github.com/ImUrX/wanakana-kt): is a fork I made of a Kotlin port of WaniKani/WanaKana that removes the need of kotlin's stdlib
+* [![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_small.png) for the Java profiler they provided me!](https://www.ej-technologies.com/products/jprofiler/overview.html)
