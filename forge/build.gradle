@@ -29,6 +29,8 @@ dependencies {
     //modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
     forgeRuntimeLibrary "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
+    forgeRuntimeLibrary "com.github.Marcono1234:gson-record-type-adapter-factory:${rootProject.record_factory_version}"
+    shadowCommon "com.github.Marcono1234:gson-record-type-adapter-factory:${rootProject.record_factory_version}"
     shadowCommon "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

@@ -26,6 +26,7 @@ dependencies {
     //modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     include "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
+    include "com.github.Marcono1234:gson-record-type-adapter-factory:${rootProject.record_factory_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }

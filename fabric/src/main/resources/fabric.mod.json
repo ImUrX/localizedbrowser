@@ -7,6 +7,14 @@
   "authors": [
     "ImUrX"
   ],
+  "contributors": [
+    {
+      "name": "KANJIDIC Project",
+      "contact": {
+        "homepage": "https://www.edrdg.org/wiki/index.php/KANJIDIC_Projec"
+      }
+    }
+  ],
   "contact": {
     "homepage": "https://github.com/imurx/localizedbrowser",
     "sources": "https://github.com/imurx/localizedbrowser",

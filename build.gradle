@@ -21,6 +21,7 @@ subprojects {
         // The following line declares the yarn mappings you may select this one as well.
         mappings "net.fabricmc:yarn:1.19+build.2:v2"
         implementation "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
+        implementation "com.github.Marcono1234:gson-record-type-adapter-factory:${rootProject.record_factory_version}"
         //implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32"
     }
 }
@@ -41,7 +42,18 @@ allprojects {
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    url = uri("https://jitpack.io")
+                }
+            }
+            filter {
+                // Only use JitPack for the `gson-record-type-adapter-factory` library
+                includeModule("com.github.Marcono1234", "gson-record-type-adapter-factory")
+                includeModule("com.github.ImUrX", "wanakana-kt");
+            }
+        }
     }
 
     tasks.withType(JavaCompile) {
