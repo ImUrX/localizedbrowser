@@ -1,6 +1,8 @@
 package io.github.interrecipebrowser;
 
 import dev.esnault.wanakana.core.Wanakana;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.resource.language.LanguageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class InterRecipeBrowser {
@@ -29,6 +33,18 @@ public class InterRecipeBrowser {
             return;
         }
         LOGGER.info("Loaded kanji dictionary");
+    }
+
+    public KanjiDictionary getKanjiDictionary() {
+        return this.kanjiDic;
+    }
+
+    public List<String> kanjiToHiragana(String sentence) {
+        List<String> array = new ArrayList<>();
+        if(!Wanakana.isJapanese(sentence)) return array;
+        List<String> tokens = Wanakana.tokenize(sentence);
+        // todo add kanji processing
+        return array;
     }
 
     public String getCurrentLanguageCode() {
