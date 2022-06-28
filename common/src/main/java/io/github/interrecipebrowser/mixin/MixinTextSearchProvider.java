@@ -48,10 +48,15 @@ public class MixinTextSearchProvider<T> implements TextSearchProviderAccess {
                             // Simplify to base letter
                             suffixArray.add(object, base);
 
-                            // Simplify to hiragana and romaji and only if its actual japanese and if it changes when simplified
+                            // Simplify to romaji if it's japanese
                             if (isJapanese) {
                                 suffixArray.add(object, Wanakana.toRomaji(lowercase));
-                                if (lowercase.equals(base)) return;
+                            }
+                            // Return if the text is the same when simplified
+                            if (lowercase.equals(base)) return;
+
+                            // Or simplify to hiragana if it's japanese
+                            if(isJapanese) {
                                 suffixArray.add(object, InterRecipeBrowser.simplifyKana(lowercase));
                             }
 
