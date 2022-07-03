@@ -3,6 +3,7 @@ package io.github.interrecipebrowser.mixin;
 import dev.esnault.wanakana.core.Wanakana;
 import io.github.interrecipebrowser.InterRecipeBrowser;
 import io.github.interrecipebrowser.access.TextSearchProviderAccess;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.search.SuffixArray;
 import net.minecraft.client.search.TextSearchProvider;
 import net.minecraft.client.search.TextSearcher;
@@ -37,7 +38,7 @@ public class MixinTextSearchProvider<T> implements TextSearchProviderAccess {
             SuffixArray<T> suffixArray = new SuffixArray<>();
 
 
-            switch (InterRecipeBrowser.instance.getCurrentLanguageCode()) {
+            switch (((AccessorLanguageManager) MinecraftClient.getInstance().getLanguageManager()).getCurrentLanguageCode()) {
                 case "ja_jp":
                     for (T object : values) {
                         textsGetter.apply(object).forEach(text -> {

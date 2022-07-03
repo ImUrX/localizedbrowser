@@ -3,9 +3,9 @@
   "package": "io.github.interrecipebrowser.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
+    "AccessorLanguageManager",
     "MixinMinecraftClient",
     "MixinRecipeBookWidget",
-    "MixinLanguageManager",
     "MixinTextSearchProvider"
   ],
   "mixins": [
