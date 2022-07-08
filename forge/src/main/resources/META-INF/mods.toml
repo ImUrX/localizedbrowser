@@ -8,7 +8,6 @@ modId = "interrecipebrowser"
 version = "${version}"
 displayName = "Localized Browsing"
 authors = "ImUrX"
-credits = "KANJIDIC Project https://www.edrdg.org/wiki/index.php/KANJIDIC_Project"
 description = '''
 Let's you search without using any graphemes!
 '''

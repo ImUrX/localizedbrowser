@@ -45,19 +45,27 @@ public class MixinTextSearchProvider<T> implements TextSearchProviderAccess {
                             String lowercase = text.toLowerCase(Locale.ROOT);
                             String base = InterRecipeBrowser.simplifyGraphemes(text).toLowerCase(Locale.ROOT);
                             boolean isJapanese = Wanakana.isJapanese(lowercase);
-
+                            boolean containsKanji = InterRecipeBrowser.containsKanji(lowercase);
+                            String kanji = containsKanji ? InterRecipeBrowser.getInstance().getJapaneseReading(lowercase) : null;
+                            
                             // Simplify to base letter
                             suffixArray.add(object, base);
 
                             // Simplify to romaji if it's japanese
                             if (isJapanese) {
                                 suffixArray.add(object, Wanakana.toRomaji(lowercase));
+
+                                if (containsKanji) {
+                                    suffixArray.add(object, kanji);
+                                    suffixArray.add(object, Wanakana.toRomaji(kanji));
+                                }
                             }
+
                             // Return if the text is the same when simplified
                             if (lowercase.equals(base)) return;
 
                             // Or simplify to hiragana if it's japanese
-                            if(isJapanese) {
+                            if (isJapanese) {
                                 suffixArray.add(object, InterRecipeBrowser.simplifyKana(lowercase));
                             }
 

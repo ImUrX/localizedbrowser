@@ -6,6 +6,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(InterRecipeBrowser.MOD_ID)
 public class InterRecipeBrowserForge {
     public InterRecipeBrowserForge() {
-        InterRecipeBrowser.instance.init();
+        InterRecipeBrowser.init();
     }
 }

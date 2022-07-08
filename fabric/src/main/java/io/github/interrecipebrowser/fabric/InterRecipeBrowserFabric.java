@@ -6,7 +6,6 @@ import net.fabricmc.api.ModInitializer;
 public class InterRecipeBrowserFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        InterRecipeBrowser.instance.init();
-
+        InterRecipeBrowser.init();
     }
 }
