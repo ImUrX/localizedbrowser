@@ -27,6 +27,7 @@ dependencies {
 
     include "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
     include "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
+    include "dev.vankka:dependencydownload-runtime:${rootProject.dependencydownload_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }

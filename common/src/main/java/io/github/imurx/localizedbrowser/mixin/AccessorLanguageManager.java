@@ -12,5 +12,5 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LanguageManager.class)
 public interface AccessorLanguageManager {
     @Accessor
-    public String getCurrentLanguageCode();
+    String getCurrentLanguageCode();
 }

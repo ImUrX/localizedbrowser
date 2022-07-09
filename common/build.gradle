@@ -1,3 +1,7 @@
+plugins {
+    id 'dev.vankka.dependencydownload.plugin' version '1.2.1'
+}
+
 architectury {
     common(rootProject.enabled_platforms.split(","))
 }

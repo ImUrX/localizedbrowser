@@ -4,6 +4,8 @@ import com.atilika.kuromoji.unidic.Tokenizer;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import dev.esnault.wanakana.core.Wanakana;
+import dev.vankka.dependencydownload.DependencyManager;
+import dev.vankka.dependencydownload.dependency.Dependency;
 import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
@@ -12,6 +14,8 @@ import net.minecraft.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +35,9 @@ public class LocalizedBrowser {
      * Should only be called by the mod's own loaders
      * @hidden
      */
-    public static void init() {
+    public static void init(Path configDir) {
         var mod = new LocalizedBrowser();
+        var manager = new DependencyManager(configDir.resolve("cache"));
         LOGGER.info("I now exist");
         INSTANCE = mod;
     }
