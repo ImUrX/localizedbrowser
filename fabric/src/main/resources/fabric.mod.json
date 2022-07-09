@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "interrecipebrowser",
+  "id": "localizedbrowser",
   "version": "${version}",
   "name": "Localized Browsing",
   "description": "Let's you search without using any graphemes!",
@@ -20,12 +20,12 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-      "io.github.interrecipebrowser.fabric.InterRecipeBrowserFabric"
+      "io.github.imurx.localizedbrowser.fabric.LocalizedBrowserFabric"
     ]
   },
   "mixins": [
-    "interrecipebrowser.mixins.json",
-    "interrecipebrowser-common.mixins.json"
+    "localizedbrowser.mixins.json",
+    "localizedbrowser-common.mixins.json"
   ],
   "depends": {
     "minecraft": ">=1.19"

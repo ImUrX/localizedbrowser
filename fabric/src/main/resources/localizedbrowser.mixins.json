@@ -1,9 +1,9 @@
 {
   "required": true,
-  "package": "io.github.interrecipebrowser.forge.mixin",
+  "package": "io.github.imurx.localizedbrowser.fabric.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "MixinCreativeInventoryScreenForge"
+    "MixinCreativeInventoryScreenFabric"
   ],
   "mixins": [
   ],

@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "io.github.interrecipebrowser.mixin",
+  "package": "io.github.imurx.localizedbrowser.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
     "AccessorLanguageManager",

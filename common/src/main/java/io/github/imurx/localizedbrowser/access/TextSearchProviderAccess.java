@@ -1,4 +1,4 @@
-package io.github.interrecipebrowser.access;
+package io.github.imurx.localizedbrowser.access;
 
 public interface TextSearchProviderAccess {
     boolean isNormalizer();

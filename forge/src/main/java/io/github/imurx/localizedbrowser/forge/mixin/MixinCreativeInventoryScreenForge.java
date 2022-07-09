@@ -1,6 +1,6 @@
-package io.github.interrecipebrowser.forge.mixin;
+package io.github.imurx.localizedbrowser.forge.mixin;
 
-import io.github.interrecipebrowser.InterRecipeBrowser;
+import io.github.imurx.localizedbrowser.LocalizedBrowser;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,7 +14,7 @@ public class MixinCreativeInventoryScreenForge {
             name = "search"
     )
     private String mixinNonSearchString(String original) {
-        return InterRecipeBrowser.romanToNative(original);
+        return LocalizedBrowser.getInstance().parseInput(original);
     }
 
     @ModifyVariable(
@@ -23,6 +23,6 @@ public class MixinCreativeInventoryScreenForge {
             name = "s"
     )
     private String mixinSearchString(String original) {
-        return InterRecipeBrowser.romanToNative(original);
+        return LocalizedBrowser.getInstance().parseInput(original);
     }
 }

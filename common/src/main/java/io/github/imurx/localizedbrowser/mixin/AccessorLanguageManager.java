@@ -1,4 +1,4 @@
-package io.github.interrecipebrowser.mixin;
+package io.github.imurx.localizedbrowser.mixin;
 
 import net.minecraft.client.resource.language.LanguageManager;
 import org.spongepowered.asm.mixin.Mixin;

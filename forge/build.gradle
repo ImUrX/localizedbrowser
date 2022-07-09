@@ -9,8 +9,8 @@ architectury {
 
 loom {
     forge {
-        mixinConfig "interrecipebrowser-common.mixins.json"
-        mixinConfig "interrecipebrowser.mixins.json"
+        mixinConfig "localizedbrowser-common.mixins.json"
+        mixinConfig "localizedbrowser.mixins.json"
     }
 }
 
