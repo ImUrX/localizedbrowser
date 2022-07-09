@@ -6,7 +6,8 @@
     "AccessorLanguageManager",
     "MixinMinecraftClient",
     "MixinRecipeBookWidget",
-    "MixinTextSearchProvider"
+    "MixinTextSearchProvider",
+    "MixinLanguageManager"
   ],
   "mixins": [
   ],

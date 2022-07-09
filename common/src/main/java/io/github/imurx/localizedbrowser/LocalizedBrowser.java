@@ -1,11 +1,14 @@
 package io.github.imurx.localizedbrowser;
 
 import com.atilika.kuromoji.unidic.Tokenizer;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import dev.esnault.wanakana.core.Wanakana;
 import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
+import net.minecraft.util.Lazy;
+import net.minecraft.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LocalizedBrowser {
@@ -35,6 +39,11 @@ public class LocalizedBrowser {
 
     public static LocalizedBrowser getInstance() {
         return INSTANCE;
+    }
+
+    public void reload() {
+        LOGGER.info("Reloading...");
+        this.japanese.reload();
     }
 
     /**
@@ -130,7 +139,11 @@ public class LocalizedBrowser {
     }
 
     public static class Japanese {
-        private final Tokenizer tokenizer = new Tokenizer();
+        private Supplier<Tokenizer> tokenizer = Suppliers.memoize(Tokenizer::new);
+
+        void reload() {
+            this.tokenizer = Suppliers.memoize(Tokenizer::new);
+        }
 
         /**
          * Checks if string contains any kanji
@@ -163,7 +176,7 @@ public class LocalizedBrowser {
          * @return Writeable sentence in hiragana
          */
         public String getJapaneseReading(String sentence) {
-            var tokens = this.tokenizer.tokenize(sentence);
+            var tokens = this.tokenizer.get().tokenize(sentence);
             return tokens.stream().map(token -> {
                 String pronunciation = token.getPronunciation(),
                         reading = token.getWrittenForm();
