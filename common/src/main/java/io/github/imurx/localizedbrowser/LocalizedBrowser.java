@@ -24,7 +24,7 @@ public class LocalizedBrowser {
     public final Japanese japanese = new Japanese();
 
     /**
-     * Should only be called by the own mod's loaders
+     * Should only be called by the mod's own loaders
      * @hidden
      */
     public static void init() {
@@ -38,7 +38,7 @@ public class LocalizedBrowser {
     }
 
     /**
-     * Used for general parsing of user input, the locale used is the Minecraft's one.
+     * Used for general parsing of user input, using the currently selected language the game is using.
      * @param string The user's input
      * @return The processed input
      */
@@ -65,7 +65,8 @@ public class LocalizedBrowser {
     }
 
     /**
-     * Used for general parsing of game text, the locale used is the Minecraft's one.
+     * Used for general parsing of game text (ex: item/block names, tooltips, etc.), using the currently selected language the game is using.
+     * Should be used with a cache, so it becomes less CPU intensive.
      * @param string The text
      * @return A list of all possible inputs the user could do
      */
@@ -74,7 +75,8 @@ public class LocalizedBrowser {
     }
 
     /**
-     * Used for general parsing of game text.
+     * Used for general parsing of game text (ex: item/block names, tooltips, etc.).
+     * Should be used with a cache, so it becomes less CPU intensive.
      * @param string The text
      * @param languageDefinition The language being used
      * @return A list of all possible inputs the user could do
