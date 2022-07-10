@@ -4,7 +4,7 @@ A mod that makes things nicer for people that don't talk english.
 Current features are:
 * Base letter shows all possible graphemes with it
 * If you use a grapheme it will only show items with that grapheme
-* Advanced Japanese support (romaji, hiragana shows katakana stuff, kanji dictionary WIP, and the top stuff actually applies to japanese)
+* Advanced Japanese support (romaji, hiragana shows katakana stuff, kanji dictionary, and the features above do apply to japanese too)
 
 To-do:
 * Pinyin support (chinese one, need to check if taiwan has something different)

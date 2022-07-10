@@ -4,17 +4,13 @@ import com.atilika.kuromoji.unidic.Tokenizer;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import dev.esnault.wanakana.core.Wanakana;
-import dev.vankka.dependencydownload.DependencyManager;
-import dev.vankka.dependencydownload.dependency.Dependency;
 import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
+import io.github.imurx.localizedbrowser.util.DependencyManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
-import net.minecraft.util.Lazy;
-import net.minecraft.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -30,14 +26,18 @@ public class LocalizedBrowser {
     public static final Logger LOGGER = LoggerFactory.getLogger("Localized Browser");
     private static LocalizedBrowser INSTANCE;
     public final Japanese japanese = new Japanese();
+    public final DependencyManager manager;
+
+    protected LocalizedBrowser(Path configDir) {
+        this.manager = new DependencyManager(configDir.resolve("localizedbrowser/cache"));
+    }
 
     /**
      * Should only be called by the mod's own loaders
      * @hidden
      */
     public static void init(Path configDir) {
-        var mod = new LocalizedBrowser();
-        var manager = new DependencyManager(configDir.resolve("cache"));
+        var mod = new LocalizedBrowser(configDir);
         LOGGER.info("I now exist");
         INSTANCE = mod;
     }
@@ -144,10 +144,22 @@ public class LocalizedBrowser {
     }
 
     public static class Japanese {
-        private Supplier<Tokenizer> tokenizer = Suppliers.memoize(Tokenizer::new);
+        private Supplier<Tokenizer> tokenizer;
+
+        public Japanese() {
+            reload();
+        }
 
         void reload() {
-            this.tokenizer = Suppliers.memoize(Tokenizer::new);
+            this.tokenizer = Suppliers.memoize(() -> {
+                LocalizedBrowser.getInstance().manager.loadFromResource("/runtimeDownload.txt");
+                try {
+                    Class<?> aClass = Class.forName("com.atilika.kuromoji.unidic.Tokenizer", true, LocalizedBrowser.getInstance().manager.classLoader);
+                    return (Tokenizer) aClass.getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
 
         /**

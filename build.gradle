@@ -22,7 +22,6 @@ subprojects {
         mappings "net.fabricmc:yarn:1.19+build.2:v2"
         implementation "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
         implementation "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
-        implementation "dev.vankka:dependencydownload-runtime:${rootProject.dependencydownload_version}"
         //implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32"
     }
 }

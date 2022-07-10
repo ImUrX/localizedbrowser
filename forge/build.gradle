@@ -30,10 +30,8 @@ dependencies {
 
     forgeRuntimeLibrary "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
     forgeRuntimeLibrary "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
-    forgeRuntimeLibrary "dev.vankka:dependencydownload-runtime:${rootProject.dependencydownload_version}"
     shadow "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
-    shadow "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
-    shadow "dev.vankka:dependencydownload-runtime:${rootProject.dependencydownload_version}"
+    //shadow "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
