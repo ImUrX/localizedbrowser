@@ -18,13 +18,6 @@ import java.util.stream.Stream;
 
 @Mixin(TextSearchProvider.class)
 public class MixinTextSearchProvider<T> implements TextSearchProviderAccess {
-    @Final
-    @Shadow
-    private List<T> values;
-    @Final
-    @Shadow
-    private Function<T, Stream<String>> textsGetter;
-
     @Unique
     private boolean needsNormalize = false;
 

@@ -5,6 +5,7 @@ import com.google.common.io.Files;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -21,34 +22,35 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Only reason this exists is because if multiple languages are going to have dependencies then
+ * I will need more than one dictionary and that means more than 40MB in the main jar...
+ */
 public class DependencyManager {
     private final Path cache;
     private final HttpClient client = HttpClient.newHttpClient();
-    private URLClassLoader classLoader;
+    public final PublicURLClassLoader classLoader;
 
     public DependencyManager(Path cache) {
         this.cache = cache;
-        this.reloadClassloader();
+        this.classLoader = new PublicURLClassLoader(this.getJars());
     }
 
-    public void reloadClassloader() {
-        try {
-            if(this.classLoader != null) this.classLoader.close();
-            File folder = this.cache.toFile();
-            File[] files = folder.listFiles((file, name) -> name.endsWith(".jar"));
-            if(files == null) {
-                this.classLoader = new URLClassLoader(new URL[0]);
-                return;
-            }
-            URL[] urls = new URL[files.length];
-            for (int i = 0; i < files.length; i++) {
-                urls[i] = files[i].toURI().toURL();
-            }
-            this.classLoader = new URLClassLoader(urls);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private URL[] getJars() {
+        File folder = this.cache.toFile();
+        File[] files = folder.listFiles((file, name) -> name.endsWith(".jar"));
+        if(files == null) {
+            return new URL[0];
         }
-
+        URL[] urls = new URL[files.length];
+        for (int i = 0; i < files.length; i++) {
+            try {
+                urls[i] = files[i].toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return urls;
     }
 
     public CompletableFuture<String> getHash(String pkg) {
@@ -56,6 +58,9 @@ public class DependencyManager {
         String[] split = pkg.split(":");
         Path file = this.cache.resolve(split[1] + ".jar");
         try {
+            // I hate doing async reading in Java
+            // I only close this when read is completed or failed, so if it gets
+            // an exception then it won't be closed.
             var channel = AsynchronousFileChannel.open(file);
             var buffer = ByteBuffer.allocate((int) channel.size());
             CompletableFuture<ByteBuffer> completableFuture = new CompletableFuture<>();
@@ -80,6 +85,7 @@ public class DependencyManager {
                     completableFuture.completeExceptionally(exc);
                 }
             });
+            // I like the hashing from Guava
             return completableFuture.thenApply(byteBuffer -> {
                 String hash = Hashing.sha256().hashBytes(byteBuffer.flip()).toString();
                 LocalizedBrowser.LOGGER.info("Got hash of {}: {}", pkg, hash);
@@ -94,10 +100,11 @@ public class DependencyManager {
         return this.getHash(pkg).thenApply(hash::equals);
     }
 
-    public CompletableFuture<Void> downloadJarAsync(String pkg, String hash) {
+    public CompletableFuture<File> downloadJarAsync(String pkg, String hash) {
         LocalizedBrowser.LOGGER.info("Downloading {}", pkg);
         String[] split = pkg.split(":");
-        URI url = URI.create("https://repo1.maven.org/maven2/")
+        // Using Google's Maven Central mirror for now
+        URI url = URI.create("https://maven-central.storage.googleapis.com/maven2/")
                 .resolve(split[0].replaceAll("\\.", "/") + "/")
                 .resolve(split[1] + "/")
                 .resolve(split[2] + "/")
@@ -110,7 +117,7 @@ public class DependencyManager {
         return this.client
                 .sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
                 .thenApply(HttpResponse::body)
-                .thenAcceptAsync(is -> {
+                .thenApplyAsync(is -> {
                     File jar = this.cache.resolve(split[1] + ".jar").toFile();
                     try {
                         Files.createParentDirs(jar);
@@ -121,6 +128,7 @@ public class DependencyManager {
                         throw new RuntimeException(e);
                     }
                     LocalizedBrowser.LOGGER.info("Downloaded {}", pkg);
+                    return jar;
                 });
     }
 
@@ -133,14 +141,24 @@ public class DependencyManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] split = line.split(" ");
-                futures.add(this.compareHash(split[0], split[1]).thenCompose(x -> x ? CompletableFuture.completedFuture(null) : downloadJarAsync(split[0], split[1])));
+                futures.add(this.compareHash(split[0], split[1])
+                        .thenCompose(x -> x ? CompletableFuture.completedFuture(null)
+                                : downloadJarAsync(split[0], split[1])
+                                .thenAccept(jar -> {
+                                    try {
+                                        this.classLoader.addURLs(jar.toURI().toURL());
+                                    } catch (MalformedURLException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                })
+                        )
+                );
             }
         } catch (IOException | NullPointerException ex) {
             throw new RuntimeException(ex);
         }
         try {
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).get();
-            this.reloadClassloader();
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
         } catch (InterruptedException | ExecutionException ex) {
             throw new RuntimeException(ex);
         }
@@ -148,9 +166,5 @@ public class DependencyManager {
 
     public Path getCache() {
         return cache;
-    }
-
-    public URLClassLoader getClassLoader() {
-        return classLoader;
     }
 }

@@ -40,7 +40,6 @@ public class LocalizedBrowser {
         var mod = new LocalizedBrowser(configDir);
         LOGGER.info("I now exist");
         INSTANCE = mod;
-        new JapaneseTokenizerWrapper();
     }
 
     public static LocalizedBrowser getInstance() {
@@ -144,6 +143,7 @@ public class LocalizedBrowser {
         }
     }
 
+    //TODO wanakana-kt still uses kotlin, I need to do something about it. Or maybe nothing idk
     public static class Japanese {
         private Supplier<JapaneseTokenizerWrapper> tokenizer;
 
@@ -154,7 +154,7 @@ public class LocalizedBrowser {
         void reload() {
             this.tokenizer = Suppliers.memoize(() -> {
                 LocalizedBrowser.getInstance().manager.loadFromResource("/runtimeDownload.txt");
-                return new JapaneseTokenizerWrapper();
+                return new JapaneseTokenizerWrapper(LocalizedBrowser.getInstance().manager.classLoader);
             });
         }
 

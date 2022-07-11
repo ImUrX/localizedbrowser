@@ -1,15 +1,15 @@
 package io.github.imurx.localizedbrowser.util;
 
-import io.github.imurx.localizedbrowser.LocalizedBrowser;
-
 import java.util.List;
 
 public class JapaneseTokenizerWrapper {
     public final Class<?> aClass;
     public final Object ptr;
-    public JapaneseTokenizerWrapper() {
+    private final ClassLoader loader;
+    public JapaneseTokenizerWrapper(ClassLoader loader) {
+        this.loader = loader;
         try {
-            this.aClass = Class.forName("com.atilika.kuromoji.unidic.Tokenizer", true, LocalizedBrowser.getInstance().manager.getClassLoader());
+            this.aClass = Class.forName("com.atilika.kuromoji.unidic.Tokenizer", true, this.loader);
             this.ptr = this.aClass.getConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -21,7 +21,7 @@ public class JapaneseTokenizerWrapper {
             return ((List<?>) this.aClass.getMethod("tokenize", String.class)
                     .invoke(this.ptr, string))
                     .stream()
-                    .map(ptr -> new TokenWrapper(ptr, LocalizedBrowser.getInstance().manager.getClassLoader()))
+                    .map(ptr -> new TokenWrapper(ptr, this.loader))
                     .toList();
         } catch(Exception e) {
             throw new RuntimeException(e);
