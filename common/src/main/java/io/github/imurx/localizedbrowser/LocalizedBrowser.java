@@ -1,11 +1,11 @@
 package io.github.imurx.localizedbrowser;
 
-import com.atilika.kuromoji.unidic.Tokenizer;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import dev.esnault.wanakana.core.Wanakana;
 import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import io.github.imurx.localizedbrowser.util.DependencyManager;
+import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class LocalizedBrowser {
     public final DependencyManager manager;
 
     protected LocalizedBrowser(Path configDir) {
-        this.manager = new DependencyManager(configDir.resolve("localizedbrowser/cache"));
+        this.manager = new DependencyManager(configDir.resolve(MOD_ID + "/cache"));
     }
 
     /**
@@ -40,6 +40,7 @@ public class LocalizedBrowser {
         var mod = new LocalizedBrowser(configDir);
         LOGGER.info("I now exist");
         INSTANCE = mod;
+        new JapaneseTokenizerWrapper();
     }
 
     public static LocalizedBrowser getInstance() {
@@ -144,7 +145,7 @@ public class LocalizedBrowser {
     }
 
     public static class Japanese {
-        private Supplier<Tokenizer> tokenizer;
+        private Supplier<JapaneseTokenizerWrapper> tokenizer;
 
         public Japanese() {
             reload();
@@ -153,12 +154,7 @@ public class LocalizedBrowser {
         void reload() {
             this.tokenizer = Suppliers.memoize(() -> {
                 LocalizedBrowser.getInstance().manager.loadFromResource("/runtimeDownload.txt");
-                try {
-                    Class<?> aClass = Class.forName("com.atilika.kuromoji.unidic.Tokenizer", true, LocalizedBrowser.getInstance().manager.classLoader);
-                    return (Tokenizer) aClass.getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                return new JapaneseTokenizerWrapper();
             });
         }
 

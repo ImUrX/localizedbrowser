@@ -5,7 +5,6 @@ import com.google.common.io.Files;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -25,15 +24,31 @@ import java.util.concurrent.ExecutionException;
 public class DependencyManager {
     private final Path cache;
     private final HttpClient client = HttpClient.newHttpClient();
-    public final URLClassLoader classLoader;
+    private URLClassLoader classLoader;
 
     public DependencyManager(Path cache) {
         this.cache = cache;
+        this.reloadClassloader();
+    }
+
+    public void reloadClassloader() {
         try {
-            this.classLoader = new URLClassLoader(new URL[]{ cache.toUri().toURL() });
-        } catch (MalformedURLException e) {
+            if(this.classLoader != null) this.classLoader.close();
+            File folder = this.cache.toFile();
+            File[] files = folder.listFiles((file, name) -> name.endsWith(".jar"));
+            if(files == null) {
+                this.classLoader = new URLClassLoader(new URL[0]);
+                return;
+            }
+            URL[] urls = new URL[files.length];
+            for (int i = 0; i < files.length; i++) {
+                urls[i] = files[i].toURI().toURL();
+            }
+            this.classLoader = new URLClassLoader(urls);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public CompletableFuture<String> getHash(String pkg) {
@@ -132,5 +147,9 @@ public class DependencyManager {
 
     public Path getCache() {
         return cache;
+    }
+
+    public URLClassLoader getClassLoader() {
+        return classLoader;
     }
 }
