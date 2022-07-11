@@ -140,6 +140,7 @@ public class DependencyManager {
         }
         try {
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()])).get();
+            this.reloadClassloader();
         } catch (InterruptedException | ExecutionException ex) {
             throw new RuntimeException(ex);
         }
