@@ -12,5 +12,5 @@ To-do:
 * Check if more languages need romanization support or something like japanese.
 
 ### Acknowledgements
-* [**wanakana-kt**](https://github.com/ImUrX/wanakana-kt): is a fork I made of a Kotlin port of WaniKani/WanaKana that removes the need of kotlin's stdlib
+* [**wanakana-kt**](https://github.com/esnaultdev/wanakana-kt): is a Kotlin port of [WaniKani/WanaKana](https://github.com/WaniKani/WanaKana)
 * [![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_small.png) for the Java profiler they provided me!](https://www.ej-technologies.com/products/jprofiler/overview.html)
