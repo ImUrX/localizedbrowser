@@ -17,13 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class LocalizedBrowser {
     public static final String MOD_ID = "localizedbrowser";
-    public static final Logger LOGGER = LoggerFactory.getLogger("Localized Browser");
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static LocalizedBrowser INSTANCE;
     public final Japanese japanese = new Japanese();
     public final DependencyManager manager;
@@ -50,6 +51,13 @@ public class LocalizedBrowser {
     public void reload() {
         LOGGER.info("Reloading...");
         this.japanese.reload();
+    }
+
+    public void forceMemoize(String langCode) {
+        switch (langCode) {
+            case "ja_jp":
+                this.japanese.tokenizer.get();
+        }
     }
 
     /**
@@ -160,7 +168,11 @@ public class LocalizedBrowser {
 
         void reload() {
             this.tokenizer = Suppliers.memoize(() -> {
-                LocalizedBrowser.getInstance().manager.loadFromResource("/runtimeDownload.txt");
+                try {
+                    LocalizedBrowser.getInstance().manager.loadFromResource("/runtimeDownload.txt").get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
                 return new JapaneseTokenizerWrapper(LocalizedBrowser.getInstance().manager.classLoader);
             });
         }

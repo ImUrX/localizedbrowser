@@ -1,6 +1,7 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
+archivesBaseName = archivesBaseName + "-forge"
 
 architectury {
     platformSetupLoomIde()
@@ -30,7 +31,7 @@ dependencies {
 
     forgeRuntimeLibrary "com.github.ImUrX:WanaKanaJava:${rootProject.wanakana_version}"
     forgeRuntimeLibrary "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
-    shadow "com.github.ImUrX:WanaKanaJava:${rootProject.wanakana_version}"
+    shadowCommon "com.github.ImUrX:WanaKanaJava:${rootProject.wanakana_version}"
     //shadow "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

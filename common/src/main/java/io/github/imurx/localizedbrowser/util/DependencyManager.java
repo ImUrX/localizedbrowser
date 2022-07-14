@@ -3,6 +3,8 @@ package io.github.imurx.localizedbrowser.util;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -19,13 +21,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Only reason this exists is because if multiple languages are going to have dependencies then
  * I will need more than one dictionary and that means more than 40MB in the main jar...
  */
 public class DependencyManager {
+    public static final Logger LOGGER = LoggerFactory.getLogger(LocalizedBrowser.MOD_ID + "/DependencyManager");
     private final Path cache;
     private final HttpClient client = HttpClient.newHttpClient();
     public final PublicURLClassLoader classLoader;
@@ -53,7 +55,7 @@ public class DependencyManager {
     }
 
     public CompletableFuture<String> getHash(String pkg) {
-        LocalizedBrowser.LOGGER.info("Getting hash of {}", pkg);
+        LOGGER.info("Getting hash of {}", pkg);
         String[] split = pkg.split(":");
         Path file = this.cache.resolve(split[1] + ".jar");
         try {
@@ -87,7 +89,7 @@ public class DependencyManager {
             // I like the hashing from Guava
             return completableFuture.thenApply(byteBuffer -> {
                 String hash = Hashing.sha256().hashBytes(byteBuffer.flip()).toString();
-                LocalizedBrowser.LOGGER.info("Got hash of {}: {}", pkg, hash);
+                LOGGER.info("Got hash of {}: {}", pkg, hash);
                 return hash;
             });
         } catch (IOException ex) {
@@ -100,7 +102,7 @@ public class DependencyManager {
     }
 
     public CompletableFuture<File> downloadJarAsync(String pkg, String hash) {
-        LocalizedBrowser.LOGGER.info("Downloading {}", pkg);
+        LOGGER.info("Downloading {}", pkg);
         String[] split = pkg.split(":");
         // Using Google's Maven Central mirror for now
         URI url = URI.create("https://maven-central.storage.googleapis.com/maven2/")
@@ -108,7 +110,6 @@ public class DependencyManager {
                 .resolve(split[1] + "/")
                 .resolve(split[2] + "/")
                 .resolve(split[1] + "-" + split[2] + ".jar");
-        LocalizedBrowser.LOGGER.info(url.toString());
         HttpRequest request = HttpRequest.newBuilder(url)
                 .timeout(Duration.ofMinutes(2))
                 .GET()
@@ -116,7 +117,7 @@ public class DependencyManager {
         return this.client
                 .sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
                 .thenApply(HttpResponse::body)
-                .thenApplyAsync(is -> {
+                .thenApply(is -> {
                     File jar = this.cache.resolve(split[1] + ".jar").toFile();
                     try {
                         Files.createParentDirs(jar);
@@ -126,12 +127,12 @@ public class DependencyManager {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    LocalizedBrowser.LOGGER.info("Downloaded {}", pkg);
+                    LOGGER.info("Downloaded {}", pkg);
                     return jar;
                 });
     }
 
-    public void loadFromResource(String filename) {
+    public CompletableFuture<Void> loadFromResource(String filename) {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         try (var stream = DependencyManager.class.getResourceAsStream(filename)) {
             assert stream != null;
@@ -156,11 +157,7 @@ public class DependencyManager {
         } catch (IOException | NullPointerException ex) {
             throw new RuntimeException(ex);
         }
-        try {
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
-        } catch (InterruptedException | ExecutionException ex) {
-            throw new RuntimeException(ex);
-        }
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
 
     public Path getCache() {

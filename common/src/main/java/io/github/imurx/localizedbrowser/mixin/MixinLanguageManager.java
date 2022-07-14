@@ -10,6 +10,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LanguageManager.class)
 public class MixinLanguageManager {
+    @Inject(at = @At("RETURN"), method = "<init>")
+    private void onInit(String languageCode, CallbackInfo ci) {
+        LocalizedBrowser.getInstance().forceMemoize(languageCode);
+    }
+
     @Inject(at = @At("RETURN"), method = "setLanguage")
     private void onSetLanguage(LanguageDefinition language, CallbackInfo ci) {
         LocalizedBrowser.getInstance().reload();
