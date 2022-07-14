@@ -8,6 +8,11 @@
     "ImUrX"
   ],
   "contributors": [
+    {
+        "name": "atilika/kuromoji",
+        "url": "https://github.com/atilika/kuromoji/"
+    },
+    "jaredlll08"
   ],
   "contact": {
     "homepage": "https://github.com/imurx/localizedbrowser",

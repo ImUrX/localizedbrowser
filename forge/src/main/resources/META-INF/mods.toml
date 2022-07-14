@@ -8,6 +8,12 @@ modId = "localizedbrowser"
 version = "${version}"
 displayName = "Localized Browsing"
 authors = "ImUrX"
+credits = '''
+Thank you to:
+jaredlll08
+Acknowledgements:
+atilika/kuromoji <https://github.com/atilika/kuromoji/>
+'''
 description = '''
 Let's you search without using any graphemes!
 '''

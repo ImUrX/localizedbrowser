@@ -12,5 +12,6 @@ To-do:
 * Check if more languages need romanization support or something like japanese.
 
 ### Acknowledgements
-* [**wanakana-kt**](https://github.com/esnaultdev/wanakana-kt): is a Kotlin port of [WaniKani/WanaKana](https://github.com/WaniKani/WanaKana)
+* [**WanaKanaJava**](https://github.com/MasterKale/WanaKanaJava): is a Java port of [WaniKani/WanaKana](https://github.com/WaniKani/WanaKana)
+* [**Kuromoji**](https://github.com/atilika/kuromoji/): is a Japanese morphological analyzer
 * [![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_small.png) for the Java profiler they provided me!](https://www.ej-technologies.com/products/jprofiler/overview.html)

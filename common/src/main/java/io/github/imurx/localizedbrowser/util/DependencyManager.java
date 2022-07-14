@@ -58,18 +58,17 @@ public class DependencyManager {
         LOGGER.info("Getting hash of {}", pkg);
         String[] split = pkg.split(":");
         Path file = this.cache.resolve(split[1] + ".jar");
+        AsynchronousFileChannel channel = null;
         try {
-            // I hate doing async reading in Java
-            // I only close this when read is completed or failed, so if it gets
-            // an exception then it won't be closed.
-            var channel = AsynchronousFileChannel.open(file);
+            channel = AsynchronousFileChannel.open(file);
             var buffer = ByteBuffer.allocate((int) channel.size());
             CompletableFuture<ByteBuffer> completableFuture = new CompletableFuture<>();
+            AsynchronousFileChannel finalChannel = channel;
             channel.read(buffer, 0, null, new CompletionHandler<Integer, Void>() {
                 @Override
                 public void completed(Integer result, Void attachment) {
                     try {
-                        channel.close();
+                        finalChannel.close();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -79,7 +78,7 @@ public class DependencyManager {
                 @Override
                 public void failed(Throwable exc, Void attachment) {
                     try {
-                        channel.close();
+                        finalChannel.close();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -93,6 +92,13 @@ public class DependencyManager {
                 return hash;
             });
         } catch (IOException ex) {
+            if(channel != null && channel.isOpen()) {
+                try {
+                    channel.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             return CompletableFuture.completedFuture(null);
         }
     }
@@ -111,7 +117,8 @@ public class DependencyManager {
                 .resolve(split[2] + "/")
                 .resolve(split[1] + "-" + split[2] + ".jar");
         HttpRequest request = HttpRequest.newBuilder(url)
-                .timeout(Duration.ofMinutes(2))
+                .timeout(Duration.ofMinutes(1))
+                .header("User-Agent", "LocalizedBrowser/2.0.0 (Minecraft; gh:ImUrX)")
                 .GET()
                 .build();
         return this.client
