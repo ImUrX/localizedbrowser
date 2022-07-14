@@ -25,7 +25,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     //modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    include "com.github.ImUrX:wanakana-kt:${rootProject.wanakana_version}"
+    include "com.github.ImUrX:WanaKanaJava:${rootProject.wanakana_version}"
     //include "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

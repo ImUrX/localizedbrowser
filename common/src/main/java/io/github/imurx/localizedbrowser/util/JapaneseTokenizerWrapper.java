@@ -6,6 +6,7 @@ public class JapaneseTokenizerWrapper {
     public final Class<?> aClass;
     public final Object ptr;
     private final ClassLoader loader;
+
     public JapaneseTokenizerWrapper(ClassLoader loader) {
         this.loader = loader;
         try {
@@ -23,7 +24,7 @@ public class JapaneseTokenizerWrapper {
                     .stream()
                     .map(ptr -> new TokenWrapper(ptr, this.loader))
                     .toList();
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -31,6 +32,7 @@ public class JapaneseTokenizerWrapper {
     public static class TokenWrapper {
         public final Class<?> aClass;
         public final Object ptr;
+
         protected TokenWrapper(Object ptr, ClassLoader classLoader) {
             try {
                 this.aClass = Class.forName("com.atilika.kuromoji.unidic.Token", true, classLoader);
@@ -43,7 +45,7 @@ public class JapaneseTokenizerWrapper {
         public String getPronunciation() {
             try {
                 return (String) this.aClass.getMethod("getPronunciation").invoke(this.ptr);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -51,7 +53,7 @@ public class JapaneseTokenizerWrapper {
         public String getWrittenForm() {
             try {
                 return (String) this.aClass.getMethod("getWrittenForm").invoke(this.ptr);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -59,7 +61,7 @@ public class JapaneseTokenizerWrapper {
         public String getSurface() {
             try {
                 return (String) this.aClass.getMethod("getSurface").invoke(this.ptr);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

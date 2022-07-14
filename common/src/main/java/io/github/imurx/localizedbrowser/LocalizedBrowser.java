@@ -2,7 +2,7 @@ package io.github.imurx.localizedbrowser;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import dev.esnault.wanakana.core.Wanakana;
+import com.wanakanajava.WanaKanaJava;
 import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import io.github.imurx.localizedbrowser.util.DependencyManager;
 import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
@@ -34,6 +34,7 @@ public class LocalizedBrowser {
 
     /**
      * Should only be called by the mod's own loaders
+     *
      * @hidden
      */
     public static void init(Path configDir) {
@@ -53,6 +54,7 @@ public class LocalizedBrowser {
 
     /**
      * Used for general parsing of user input, using the currently selected language the game is using.
+     *
      * @param string The user's input
      * @return The processed input
      */
@@ -62,7 +64,8 @@ public class LocalizedBrowser {
 
     /**
      * Used for general parsing of user input.
-     * @param string The user's input
+     *
+     * @param string             The user's input
      * @param languageDefinition The language being used
      * @return The processed input
      */
@@ -73,14 +76,16 @@ public class LocalizedBrowser {
     private final Map<String, Function<String, String>> inputParsers = ImmutableMap.of(
             "ja_jp", Japanese::parseInput
     );
+
     private String parseInput(String string, String code) {
-        if(this.inputParsers.containsKey(code)) return this.inputParsers.get(code).apply(string);
+        if (this.inputParsers.containsKey(code)) return this.inputParsers.get(code).apply(string);
         return string;
     }
 
     /**
      * Used for general parsing of game text (ex: item/block names, tooltips, etc.), using the currently selected language the game is using.
      * Should be used with a cache, so it becomes less CPU intensive.
+     *
      * @param string The text
      * @return A list of all possible inputs the user could do
      */
@@ -91,7 +96,8 @@ public class LocalizedBrowser {
     /**
      * Used for general parsing of game text (ex: item/block names, tooltips, etc.).
      * Should be used with a cache, so it becomes less CPU intensive.
-     * @param string The text
+     *
+     * @param string             The text
      * @param languageDefinition The language being used
      * @return A list of all possible inputs the user could do
      */
@@ -102,8 +108,9 @@ public class LocalizedBrowser {
     private final Map<String, Function<String, List<String>>> outputParsers = ImmutableMap.of(
             "ja_jp", japanese::parseOutputs
     );
+
     private List<String> parseOutputs(String string, String code) {
-        if(this.outputParsers.containsKey(code)) return this.outputParsers.get(code).apply(string);
+        if (this.outputParsers.containsKey(code)) return this.outputParsers.get(code).apply(string);
         return Common.parseOutputs(string);
     }
 
@@ -121,7 +128,7 @@ public class LocalizedBrowser {
          * Simplifies graphemes, it's relative to the type of text being given currently.
          */
         public static String simplifyGraphemes(String string) {
-            if (Wanakana.isJapanese(string)) {
+            if (Japanese.WANAKANA.isJapanese(string)) {
                 string = Japanese.simplifyKana(string);
             }
             return removeDiacritics(string);
@@ -143,12 +150,12 @@ public class LocalizedBrowser {
         }
     }
 
-    //TODO wanakana-kt still uses kotlin, I need to do something about it. Or maybe nothing idk
     public static class Japanese {
         private Supplier<JapaneseTokenizerWrapper> tokenizer;
+        public static final WanaKanaJava WANAKANA = new WanaKanaJava(false);
 
         public Japanese() {
-            reload();
+            this.reload();
         }
 
         void reload() {
@@ -162,29 +169,30 @@ public class LocalizedBrowser {
          * Checks if string contains any kanji
          */
         public static boolean containsKanji(String string) {
-            return string.codePoints().anyMatch(x -> Wanakana.isKanji(Character.toString(x)));
+            return string.codePoints().anyMatch(x -> WANAKANA.isKanji(Character.toString(x)));
         }
 
         /**
          * Simplifies the text to hiragana, no matter the case.
          */
         public static String simplifyKana(String string) {
-            return Wanakana.toHiragana(string);
+            return WANAKANA.toHiragana(string);
         }
 
         /**
          * For usage in {@link LocalizedBrowser#parseInput(String, String) LocalizedBrowser.parseInput()}
          */
         public static String parseInput(String string) {
-            if (Wanakana.isRomaji(string) && string.equals(string.toLowerCase(Locale.ROOT))) {
+            if (WANAKANA.isRomaji(string) && string.equals(string.toLowerCase(Locale.ROOT))) {
                 // Pass it to katakana to support choonpu which is used in romaji it seems
-                return Wanakana.toRomaji(Wanakana.toKatakana(string));
+                return WANAKANA.toRomaji(WANAKANA.toKatakana(string));
             }
             return string;
         }
 
         /**
          * Tokenizes the string to check for kanji and parses the whole string to hiragana
+         *
          * @param sentence Sentence containing kanji
          * @return Writeable sentence in hiragana
          */
@@ -193,7 +201,7 @@ public class LocalizedBrowser {
             return tokens.stream().map(token -> {
                 String pronunciation = token.getPronunciation(),
                         reading = token.getWrittenForm();
-                return Japanese.containsKanji(reading) ? Wanakana.toHiragana(pronunciation) : token.getSurface();
+                return Japanese.containsKanji(reading) ? WANAKANA.toHiragana(pronunciation) : token.getSurface();
             }).collect(Collectors.joining());
         }
 
@@ -201,7 +209,7 @@ public class LocalizedBrowser {
             List<String> array = new ArrayList<>();
             String lowercase = text.toLowerCase(Locale.ROOT);
             String base = Common.simplifyGraphemes(text).toLowerCase(Locale.ROOT);
-            boolean isJapanese = Wanakana.isJapanese(lowercase);
+            boolean isJapanese = WANAKANA.isJapanese(lowercase);
             boolean containsKanji = Japanese.containsKanji(lowercase);
             String kanji = containsKanji ? this.getJapaneseReading(lowercase) : null;
             //TODO kanji parser doesnt give base letters (ex: 音符ブロック you can't do おんぷふろっく currently)
@@ -211,12 +219,12 @@ public class LocalizedBrowser {
 
             // Simplify to romaji if it's japanese
             if (isJapanese) {
-                array.add(Wanakana.toRomaji(lowercase));
+                array.add(WANAKANA.toRomaji(lowercase));
 
                 // Add kanji in hiragana and romaji
                 if (containsKanji) {
                     array.add(kanji);
-                    array.add(Wanakana.toRomaji(kanji));
+                    array.add(WANAKANA.toRomaji(kanji));
                 }
             }
 

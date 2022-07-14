@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -39,7 +38,7 @@ public class DependencyManager {
     private URL[] getJars() {
         File folder = this.cache.toFile();
         File[] files = folder.listFiles((file, name) -> name.endsWith(".jar"));
-        if(files == null) {
+        if (files == null) {
             return new URL[0];
         }
         URL[] urls = new URL[files.length];
