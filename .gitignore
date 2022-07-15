@@ -18,3 +18,4 @@ classes/
 .settings
 *.launch
 logs/
+local.properties

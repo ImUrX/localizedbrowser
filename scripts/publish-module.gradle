@@ -1,0 +1,58 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = rootProject.maven_group
+                artifactId = rootProject.archives_base_name
+                version = rootProject.mod_version
+                //from components.java
+                artifact javadocJar
+
+                pom {
+                    name = rootProject.archives_base_name
+                    description = 'Mod for making searching stuff easier in other languages on Minecraft'
+                    url = 'https://github.com/ImUrX/localizedbrowser'
+                    licenses {
+                        license {
+                            name = 'Apache License Version 2.0'
+                            url = 'https://github.com/ImUrX/localizedbrowser/blob/main/LICENSE-APACHE'
+                        }
+                        license {
+                            name = 'MIT License'
+                            url = 'https://github.com/ImUrX/localizedbrowser/blob/main/LICENSE-MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'ImUrX'
+                            name = 'Uriel Fontan'
+                            email = 'urielfontan2002@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:github.com/ImUrX/localizedbrowser.git'
+                        developerConnection = 'scm:git:ssh://github.com/ImUrX/localizedbrowser.git'
+                        url = 'https://github.com/ImUrX/localizedbrowser/tree/main'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    useInMemoryPgpKeys(
+            rootProject.ext["signing.keyId"],
+            rootProject.ext["signing.key"],
+            rootProject.ext["signing.password"],
+    )
+    sign publishing.publications
+}

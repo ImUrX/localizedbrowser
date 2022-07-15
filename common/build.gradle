@@ -21,6 +21,17 @@ dependencies {
 
 jar.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 
+remapJar {
+    from rootProject.file("LICENSE-APACHE")
+    from rootProject.file("LICENSE-MIT")
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    options.addBooleanOption('html5', true)
+}
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+
 publishing {
     publications {
         mavenCommon(MavenPublication) {
