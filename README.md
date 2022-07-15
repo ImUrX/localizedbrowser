@@ -11,6 +11,32 @@ To-do:
 * Romaja support (korean one)
 * Check if more languages need romanization support or something like japanese.
 
+## Maven
+### Fabric or Forge
+I suggest using Modrinth as a repository. [Use this official tutorial on how to do it](https://docs.modrinth.com/docs/tutorials/maven/)
+#### Fabric
+```groovy
+dependencies {
+    modImplementation "maven.modrinth:localized-browser:VERSION-fabric"
+}
+```
+#### Forge (ForgeGradle)
+```groovy
+dependencies {
+    implementation fg.deobf("maven.modrinth:localized-browser:VERSION-forge")
+}
+```
+### Architectury or similars
+You can use Maven Central to implement only the common part of the mod by doing the following:
+```groovy
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation "io.github.imurx.localizedbrowser:localizedbrowser:VERSION"
+}
+```
+
 ### Acknowledgements
 * [**WanaKanaJava**](https://github.com/MasterKale/WanaKanaJava): is a Java port of [WaniKani/WanaKana](https://github.com/WaniKani/WanaKana)
 * [**Kuromoji**](https://github.com/atilika/kuromoji/): is a Japanese morphological analyzer

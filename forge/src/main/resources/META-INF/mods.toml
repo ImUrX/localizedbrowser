@@ -18,6 +18,7 @@ description = '''
 Let's you search without using any graphemes!
 '''
 logoFile = "icon.png"
+updateJSONURL = "https://api.modrinth.com/updates/localized-browser/forge_updates.json"
 displayTest = "IGNORE_ALL_VERSION"
 
 [[dependencies.localizedbrowser]]
