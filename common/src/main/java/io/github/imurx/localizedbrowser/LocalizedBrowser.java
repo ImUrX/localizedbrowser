@@ -14,7 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.text.Normalizer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -214,11 +217,10 @@ public class LocalizedBrowser {
                 if(!Japanese.containsKanji(surface)) {
                     strings.add(surface);
                 } else {
-                    strings.add(Wanakana.toHiragana(Wanakana.toRomaji(pronunciation)));
-                    String reading = token.getReading();
-                    if(!pronunciation.equals(reading)) {
-                        strings.add(Wanakana.toHiragana(Wanakana.toRomaji(reading)));
-                    }
+                    String hiragana = Wanakana.toHiragana(pronunciation);
+                    String romaji = Wanakana.toHiragana(Wanakana.toRomaji(pronunciation));
+                    strings.add(hiragana);
+                    if(!hiragana.equals(romaji)) strings.add(romaji);
                 }
                 return strings;
             }).toList();

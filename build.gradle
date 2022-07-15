@@ -23,7 +23,7 @@ subprojects {
         // The following line declares the yarn mappings you may select this one as well.
         mappings "net.fabricmc:yarn:1.19+build.2:v2"
         implementation "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
-        implementation "com.atilika.kuromoji:kuromoji-ipadic:${rootProject.kuromoji_version}"
+        implementation "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
         implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32"
     }
 }

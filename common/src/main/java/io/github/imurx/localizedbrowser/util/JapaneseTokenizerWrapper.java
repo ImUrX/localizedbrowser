@@ -10,7 +10,7 @@ public class JapaneseTokenizerWrapper {
     public JapaneseTokenizerWrapper(ClassLoader loader) {
         this.loader = loader;
         try {
-            this.aClass = Class.forName("com.atilika.kuromoji.ipadic.Tokenizer", true, this.loader);
+            this.aClass = Class.forName("com.atilika.kuromoji.unidic.Tokenizer", true, this.loader);
             this.ptr = this.aClass.getConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -35,7 +35,7 @@ public class JapaneseTokenizerWrapper {
 
         protected TokenWrapper(Object ptr, ClassLoader classLoader) {
             try {
-                this.aClass = Class.forName("com.atilika.kuromoji.ipadic.Token", true, classLoader);
+                this.aClass = Class.forName("com.atilika.kuromoji.unidic.Token", true, classLoader);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -50,9 +50,9 @@ public class JapaneseTokenizerWrapper {
             }
         }
 
-        public String getReading() {
+        public String getWrittenForm() {
             try {
-                return (String) this.aClass.getMethod("getReading").invoke(this.ptr);
+                return (String) this.aClass.getMethod("getWrittenForm").invoke(this.ptr);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
