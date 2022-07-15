@@ -28,10 +28,11 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
     // Remove the next line if you don't want to depend on the API
     //modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    forgeRuntimeLibrary 'thedarkcolour:kotlinforforge:3.6.0'
 
-    forgeRuntimeLibrary "com.github.ImUrX:WanaKanaJava:${rootProject.wanakana_version}"
+    forgeRuntimeLibrary "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
     forgeRuntimeLibrary "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
-    shadowCommon "com.github.ImUrX:WanaKanaJava:${rootProject.wanakana_version}"
+    shadowCommon "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
     //shadow "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

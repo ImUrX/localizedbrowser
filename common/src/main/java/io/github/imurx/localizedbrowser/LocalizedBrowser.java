@@ -2,7 +2,8 @@ package io.github.imurx.localizedbrowser;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.wanakanajava.WanaKanaJava;
+import com.google.common.collect.Lists;
+import dev.esnault.wanakana.core.Wanakana;
 import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import io.github.imurx.localizedbrowser.util.DependencyManager;
 import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
@@ -13,10 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -136,7 +134,7 @@ public class LocalizedBrowser {
          * Simplifies graphemes, it's relative to the type of text being given currently.
          */
         public static String simplifyGraphemes(String string) {
-            if (Japanese.WANAKANA.isJapanese(string)) {
+            if (Wanakana.isJapanese(string)) {
                 string = Japanese.simplifyKana(string);
             }
             return removeDiacritics(string);
@@ -160,7 +158,6 @@ public class LocalizedBrowser {
 
     public static class Japanese {
         private Supplier<JapaneseTokenizerWrapper> tokenizer;
-        public static final WanaKanaJava WANAKANA = new WanaKanaJava(false);
 
         public Japanese() {
             this.reload();
@@ -181,23 +178,23 @@ public class LocalizedBrowser {
          * Checks if string contains any kanji
          */
         public static boolean containsKanji(String string) {
-            return string.codePoints().anyMatch(x -> WANAKANA.isKanji(Character.toString(x)));
+            return string.codePoints().anyMatch(x -> Wanakana.isKanji(Character.toString(x)));
         }
 
         /**
          * Simplifies the text to hiragana, no matter the case.
          */
         public static String simplifyKana(String string) {
-            return WANAKANA.toHiragana(string);
+            return Wanakana.toHiragana(string);
         }
 
         /**
          * For usage in {@link LocalizedBrowser#parseInput(String, String) LocalizedBrowser.parseInput()}
          */
         public static String parseInput(String string) {
-            if (WANAKANA.isRomaji(string) && string.equals(string.toLowerCase(Locale.ROOT))) {
+            if (Wanakana.isRomaji(string) && string.equals(string.toLowerCase(Locale.ROOT))) {
                 // Pass it to katakana to support choonpu which is used in romaji it seems
-                return WANAKANA.toRomaji(WANAKANA.toKatakana(string));
+                return Wanakana.toRomaji(Wanakana.toKatakana(string));
             }
             return string;
         }
@@ -208,22 +205,33 @@ public class LocalizedBrowser {
          * @param sentence Sentence containing kanji
          * @return Writeable sentence in hiragana
          */
-        public String getJapaneseReading(String sentence) {
+        public List<String> getJapaneseReading(String sentence) {
             var tokens = this.tokenizer.get().tokenize(sentence);
-            return tokens.stream().map(token -> {
+            var options = tokens.stream().map(token -> {
+                List<String> strings = new ArrayList<>();
                 String pronunciation = token.getPronunciation(),
-                        reading = token.getWrittenForm();
-                return Japanese.containsKanji(reading) ? WANAKANA.toHiragana(pronunciation) : token.getSurface();
-            }).collect(Collectors.joining());
+                        surface = token.getSurface();
+                if(!Japanese.containsKanji(surface)) {
+                    strings.add(surface);
+                } else {
+                    strings.add(Wanakana.toHiragana(Wanakana.toRomaji(pronunciation)));
+                    String reading = token.getReading();
+                    if(!pronunciation.equals(reading)) {
+                        strings.add(Wanakana.toHiragana(Wanakana.toRomaji(reading)));
+                    }
+                }
+                return strings;
+            }).toList();
+            return Lists.cartesianProduct(options).stream().map(x -> String.join("", x)).collect(Collectors.toList());
         }
 
         public List<String> parseOutputs(String text) {
             List<String> array = new ArrayList<>();
             String lowercase = text.toLowerCase(Locale.ROOT);
             String base = Common.simplifyGraphemes(text).toLowerCase(Locale.ROOT);
-            boolean isJapanese = WANAKANA.isJapanese(lowercase);
+            boolean isJapanese = Wanakana.isJapanese(lowercase);
             boolean containsKanji = Japanese.containsKanji(lowercase);
-            String kanji = containsKanji ? this.getJapaneseReading(lowercase) : null;
+            List<String> kanji = containsKanji ? this.getJapaneseReading(lowercase) : null;
             //TODO kanji parser doesnt give base letters (ex: 音符ブロック you can't do おんぷふろっく currently)
 
             // Simplify to base letter
@@ -231,12 +239,12 @@ public class LocalizedBrowser {
 
             // Simplify to romaji if it's japanese
             if (isJapanese) {
-                array.add(WANAKANA.toRomaji(lowercase));
+                array.add(Wanakana.toRomaji(lowercase));
 
                 // Add kanji in hiragana and romaji
                 if (containsKanji) {
-                    array.add(kanji);
-                    array.add(WANAKANA.toRomaji(kanji));
+                    array.addAll(kanji);
+                    array.addAll(kanji.stream().map(Wanakana::toRomaji).toList());
                 }
             }
 
@@ -249,7 +257,7 @@ public class LocalizedBrowser {
 
                 // Add kanji sentence wholly in hiragana
                 if (containsKanji) {
-                    array.add(Japanese.simplifyKana(kanji));
+                    array.addAll(kanji.stream().map(Japanese::simplifyKana).toList());
                 }
             }
 
