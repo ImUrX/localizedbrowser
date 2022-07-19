@@ -19,16 +19,14 @@ public class IMETextFieldWidget extends TextFieldWidget {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (!this.isActive()) return false;
-        if (super.keyPressed(keyCode, scanCode, modifiers)) return true;
+    public boolean charTyped(char chr, int modifiers) {
+        if (!this.isActive() || !super.charTyped(chr, modifiers)) return false;
         int start = this.getCursor();
         int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
         var text = Wanakana.toKanaIme(new ImeText(this.getText(), Math.min(start, end), Math.max(start, end)));
         this.setText(text.getText());
         this.setSelectionStart(text.getSelection().getStart());
         this.setSelectionEnd(text.getSelection().getEndInclusive());
-        LocalizedBrowser.LOGGER.info("Start: {}, End: {}", text.getSelection().getStart(), text.getSelection().getEndInclusive());
-        return false;
+        return true;
     }
 }
