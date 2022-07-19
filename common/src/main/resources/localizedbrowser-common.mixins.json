@@ -4,10 +4,11 @@
   "compatibilityLevel": "JAVA_16",
   "client": [
     "AccessorLanguageManager",
+    "AccessorTextFieldWidget",
+    "MixinLanguageManager",
     "MixinMinecraftClient",
     "MixinRecipeBookWidget",
-    "MixinTextSearchProvider",
-    "MixinLanguageManager"
+    "MixinTextSearchProvider"
   ],
   "mixins": [
   ],
