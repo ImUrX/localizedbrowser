@@ -6,7 +6,7 @@ license = "MIT OR Apache-2.0"
 [[mods]]
 modId = "localizedbrowser"
 version = "${version}"
-displayName = "Localized Browsing"
+displayName = "Better Locale"
 authors = "ImUrX"
 credits = '''
 Thank you to:

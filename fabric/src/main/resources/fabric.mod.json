@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "localizedbrowser",
   "version": "${version}",
-  "name": "Localized Browsing",
+  "name": "Better Locale",
   "description": "Let's you search without using any graphemes!",
   "authors": [
     "ImUrX"
