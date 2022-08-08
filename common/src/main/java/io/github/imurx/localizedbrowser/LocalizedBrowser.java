@@ -8,7 +8,9 @@ import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import io.github.imurx.localizedbrowser.util.DependencyManager;
 import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.LanguageDefinition;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +31,11 @@ public class LocalizedBrowser {
     private static LocalizedBrowser INSTANCE;
     public final Japanese japanese = new Japanese();
     public final DependencyManager manager;
+    public final KeyBinding changeLocale;
 
-    protected LocalizedBrowser(Path configDir) {
+
+    protected LocalizedBrowser(Path configDir, KeyBinding changeLocale) {
+        this.changeLocale = changeLocale;
         this.manager = new DependencyManager(configDir.resolve(MOD_ID + "/cache"));
     }
 
@@ -39,8 +44,8 @@ public class LocalizedBrowser {
      *
      * @hidden
      */
-    public static void init(Path configDir) {
-        var mod = new LocalizedBrowser(configDir);
+    public static void init(Path configDir, KeyBinding changeLocale) {
+        var mod = new LocalizedBrowser(configDir, changeLocale);
         LOGGER.info("I now exist");
         INSTANCE = mod;
     }
