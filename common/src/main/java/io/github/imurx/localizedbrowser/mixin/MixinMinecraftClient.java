@@ -12,12 +12,12 @@ import java.util.List;
 
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
-    @Inject(at = @At("TAIL"), method = {"lambda$createSearchTrees$18", "method_43760"}, remap = false)
+    @Inject(at = @At("TAIL"), method = {"lambda$createSearchTrees$19", "method_43760", "m_231385_"}, remap = false)
     private static void mapRecipeOutput(List resultCollections, CallbackInfoReturnable<TextSearchProvider> cir) {
         ((TextSearchProviderAccess) cir.getReturnValue()).setNormalizer(true);
     }
 
-    @Inject(at = @At("TAIL"), method = {"lambda$createSearchTrees$9", "method_43764"}, remap = false)
+    @Inject(at = @At("TAIL"), method = {"lambda$createSearchTrees$10", "method_43764", "m_91316_"}, remap = false)
     private static void mapItemTooltip(List stacks, CallbackInfoReturnable<TextSearchProvider> cir) {
         ((TextSearchProviderAccess) cir.getReturnValue()).setNormalizer(true);
     }
