@@ -48,6 +48,11 @@ allprojects {
             name = 'kotlinforforge'
             url = 'https://thedarkcolour.github.io/KotlinForForge/'
         }
+        maven {
+            url "https://maven.siphalor.de/"
+            name "Siphalor's Maven"
+        }
+        maven { url 'https://jitpack.io' }
     }
 
     tasks.withType(JavaCompile) {
