@@ -52,7 +52,6 @@ allprojects {
             url "https://maven.siphalor.de/"
             name "Siphalor's Maven"
         }
-        maven { url 'https://jitpack.io' }
     }
 
     tasks.withType(JavaCompile) {
