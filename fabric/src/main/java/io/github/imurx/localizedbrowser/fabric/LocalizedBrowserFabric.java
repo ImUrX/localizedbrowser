@@ -15,7 +15,7 @@ public class LocalizedBrowserFabric implements ModInitializer {
             "key.localizedbrowser.locale",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_SPACE,
-            "key.categories.ui",
+            KeyBinding.UI_CATEGORY,
             new KeyModifiers(false, true, false)
     );
 

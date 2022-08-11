@@ -19,7 +19,7 @@ public class LocalizedBrowserForge {
             KeyModifier.CONTROL,
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_SPACE,
-            "key.categories.ui"
+            KeyBinding.UI_CATEGORY
     );
     public LocalizedBrowserForge() {
         LocalizedBrowser.init(FMLPaths.CONFIGDIR.get(), this.changeLocale);
