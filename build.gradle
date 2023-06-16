@@ -1,65 +1,163 @@
 plugins {
-    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
+    id "java"
+    id "xyz.wagyourtail.unimined" version "1.0.0-SNAPSHOT"
+    id 'dev.vankka.dependencydownload.plugin' version '1.3.0'
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
 }
-apply from: "${rootDir}/scripts/publish-root.gradle"
 
-architectury {
-    minecraft = rootProject.minecraft_version
-}
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
 
-subprojects {
-    apply plugin: "dev.architectury.loom"
-
-    //loom {
-        //silentMojangMappingsLicense()
-    //}
-
-    dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        // The following line declares the mojmap mappings, you may use other mappings as well
-        //mappings loom.officialMojangMappings()
-        // The following line declares the yarn mappings you may select this one as well.
-        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
-        implementation "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
-        implementation "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
-        implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32"
+sourceSets {
+    fabric {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+    forge {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
     }
 }
 
-allprojects {
-    apply plugin: "java"
-    apply plugin: "architectury-plugin"
-    apply plugin: "maven-publish"
+tasks.register("fabricJar", Jar) {
+    from sourceSets.fabric.output, sourceSets.main.output
 
-    archivesBaseName = rootProject.archives_base_name
-    version = rootProject.mod_version
-    group = rootProject.maven_group
+    archiveClassifier = "fabric"
+}
 
-    repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
-        mavenCentral()
-        maven {
-            name = 'kotlinforforge'
-            url = 'https://thedarkcolour.github.io/KotlinForForge/'
-        }
-        maven {
-            url "https://maven.siphalor.de/"
-            name "Siphalor's Maven"
-        }
+tasks.register("forgeJar", Jar) {
+    from sourceSets.forge.output, sourceSets.main.output
+
+    archiveClassifier = "forge"
+}
+
+repositories {
+//    maven {
+//        name = "wagyourtail-forge-hotfix"
+//        url = "https://maven.wagyourtail.xyz/releases"
+//    }
+    mavenCentral()
+    maven {
+        name = "sponge"
+        url = "https://repo.spongepowered.org/maven"
     }
-
-    tasks.withType(JavaCompile) {
-        options.encoding = "UTF-8"
-        options.release = 17
+    maven {
+        name = 'kotlinforforge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
     }
-
-    java {
-        withSourcesJar()
+    maven {
+        url "https://maven.siphalor.de/"
+        name "Siphalor's Maven"
     }
 }
+
+unimined.minecraft {
+    version project.minecraft_version
+
+    mappings {
+        intermediary()
+        yarn(project.mapping_version)
+
+        devFallbackNamespace "intermediary"
+    }
+
+    defaultRemapJar = false
+}
+
+unimined.minecraft(sourceSets.fabric) {
+    version project.minecraft_version
+
+    mappings {
+        yarn(project.mapping_version)
+    }
+
+    fabric {
+        loader project.fabric_loader_version
+    }
+}
+
+unimined.minecraft(sourceSets.forge) {
+    version project.minecraft_version
+
+    mappings {
+        intermediary()
+        yarn(project.mapping_version)
+
+        devFallbackNamespace "intermediary"
+    }
+
+    forge {
+        forge project.forge_version
+        mixinConfig "modid.mixins.json"
+    }
+}
+
+configurations {
+    mainImplementation
+    implementation {
+        extendsFrom forgeImplementation
+        extendsFrom fabricImplementation
+    }
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.mainImplementation
+        runtimeClasspath += configurations.mainImplementation
+    }
+}
+
+dependencies {
+    // we need this in main where it isn't by default
+    mainImplementation "org.spongepowered:mixin:0.8.5"
+
+    runtimeDownload "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
+
+    implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"
+    implementation "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
+
+    fabricModImplementation fabricApi.fabricModule("fabric-api-base",  project.fabric_api_version)
+    fabricModImplementation fabricApi.fabricModule("fabric-key-binding-api-v1",  project.fabric_api_version)
+    fabricModImplementation fabricApi.fabricModule("fabric-resource-loader-v0",  project.fabric_api_version)
+    fabricModImplementation "de.siphalor:amecsapi-1.19:1.3.6+mc22w17a", { transitive = false }
+    fabricInclude "de.siphalor:amecsapi-1.19:1.3.6+mc22w17a", { transitive = false }
+}
+
+processFabricResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+processForgeResources {
+    inputs.property "version", project.version
+
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
+    }
+}
+
+jar.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
+
+jar {
+    from project.file("LICENSE-APACHE")
+    from project.file("LICENSE-MIT")
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    options.addBooleanOption('html5', true)
+}
+//apply from: "${project.projectDir}/scripts/publish-module.gradle"
+//
+//publishing {
+//    publications {
+//        mavenCommon(MavenPublication) {
+//            artifactId = project.archives_base_name
+//            from components.java
+//        }
+//    }
+//}

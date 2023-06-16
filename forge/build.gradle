@@ -3,39 +3,30 @@ plugins {
 }
 version = version + "-forge"
 
-architectury {
-    platformSetupLoomIde()
-    forge()
-}
-
-loom {
-    forge {
-        mixinConfig "localizedbrowser-common.mixins.json"
-        mixinConfig "localizedbrowser.mixins.json"
-    }
-}
-
-
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentForge.extendsFrom common
+}
+
+unimined.minecraft {
+    forge {
+        forge rootProject.forge_version
+    }
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.forge_version}"
     // Remove the next line if you don't want to depend on the API
     //modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
-    forgeRuntimeLibrary 'thedarkcolour:kotlinforforge:3.6.0'
+    implementation 'thedarkcolour:kotlinforforge:3.6.0'
 
-    forgeRuntimeLibrary "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
-    forgeRuntimeLibrary "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
+    implementation "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
+    implementation "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
     shadowCommon "dev.esnault.wanakana:wanakana-core:${rootProject.wanakana_version}"
     //shadow "com.atilika.kuromoji:kuromoji-unidic:${rootProject.kuromoji_version}"
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+    common(project(path: ":common")) { transitive false }
+    shadowCommon(project(path: ":common")) { transitive = false }
 }
 
 processResources {
@@ -48,14 +39,13 @@ processResources {
 
 shadowJar {
     exclude "fabric.mod.json"
-    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }
 
 remapJar {
-    input.set shadowJar.archiveFile
+    inputFile = shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }
