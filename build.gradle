@@ -3,6 +3,7 @@ plugins {
     id "xyz.wagyourtail.unimined" version "1.0.0-SNAPSHOT"
     id 'dev.vankka.dependencydownload.plugin' version '1.3.0'
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 archivesBaseName = project.archives_base_name
@@ -29,7 +30,7 @@ tasks.register("fabricJar", Jar) {
 tasks.register("forgeJar", Jar) {
     from sourceSets.forge.output, sourceSets.main.output
 
-    archiveClassifier = "forge"
+    archiveClassifier = "forge-dev"
 }
 
 repositories {
@@ -89,7 +90,7 @@ unimined.minecraft(sourceSets.forge) {
 
     forge {
         forge project.forge_version
-        mixinConfig "modid.mixins.json"
+        mixinConfig "localizedbrowser.mixins.json"
     }
 }
 
@@ -99,6 +100,7 @@ configurations {
         extendsFrom forgeImplementation
         extendsFrom fabricImplementation
     }
+    shadowForge
 }
 
 sourceSets {
@@ -114,14 +116,41 @@ dependencies {
 
     runtimeDownload "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
 
-    implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"
     implementation "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
+    fabricImplementation(implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32")
 
+    fabricImplementation(forgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
     fabricModImplementation fabricApi.fabricModule("fabric-api-base",  project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-key-binding-api-v1",  project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-resource-loader-v0",  project.fabric_api_version)
     fabricModImplementation "de.siphalor:amecsapi-1.19:1.3.6+mc22w17a", { transitive = false }
     fabricInclude "de.siphalor:amecsapi-1.19:1.3.6+mc22w17a", { transitive = false }
+    fabricInclude "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"
+
+    forgeImplementation 'thedarkcolour:kotlinforforge:3.6.0'
+    shadowForge "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"
+}
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+task shadowForge(type: ShadowJar) {
+    from forgeJar.archiveFile
+    exclude "fabric.mod.json"
+
+    configurations = [project.configurations.shadowForge]
+    classifier "dev-forge-shadow"
+
+    manifest {
+        attributes([
+                "MixinConfigs": "localizedbrowser.mixins.json,localizedbrowser-common.mixins.json"
+        ])
+    }
+}
+
+remapForgeJar {
+    inputFile = shadowForge.archiveFile
+    dependsOn shadowForge
+    classifier "forge"
 }
 
 processFabricResources {
