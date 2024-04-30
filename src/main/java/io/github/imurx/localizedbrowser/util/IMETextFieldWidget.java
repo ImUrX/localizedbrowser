@@ -23,10 +23,10 @@ public class IMETextFieldWidget extends TextFieldWidget {
         if (!this.isActive() || !super.charTyped(chr, modifiers)) return false;
         int start = this.getCursor();
         int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
-        var text = Wanakana.toKanaIme(new ImeText(this.getText(), Math.min(start, end), Math.max(start, end)));
-        this.setText(text.getText());
-        this.setSelectionStart(text.getSelection().getStart());
-        this.setSelectionEnd(text.getSelection().getEndInclusive());
+        var text = LocalizedBrowser.getInstance().imeParser(this.getText(), Math.min(start, end), Math.max(start, end));
+        this.setText(text.text());
+        this.setSelectionStart(text.selection().getStart());
+        this.setSelectionEnd(text.selection().getEndInclusive());
         return true;
     }
 }

@@ -19,3 +19,7 @@ classes/
 *.launch
 logs/
 local.properties
+
+# nix
+flake.lock
+.direnv/

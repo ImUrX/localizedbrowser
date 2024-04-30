@@ -1,14 +1,15 @@
 {
   "required": true,
   "package": "io.github.imurx.localizedbrowser.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_21",
   "client": [
     "AccessorLanguageManager",
     "AccessorTextFieldWidget",
     "MixinLanguageManager",
     "MixinMinecraftClient",
     "MixinRecipeBookWidget",
-    "MixinTextSearchProvider"
+    "MixinTextSearchProvider",
+    "MixinCreativeInventoryScreen"
   ],
   "mixins": [
   ],

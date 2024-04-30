@@ -4,13 +4,16 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import dev.esnault.wanakana.core.Wanakana;
+import dev.esnault.wanakana.core.utils.ImeText;
 import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import io.github.imurx.localizedbrowser.util.DependencyManager;
+import io.github.imurx.localizedbrowser.util.IMEText;
 import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
+import io.netty.util.internal.UnstableApi;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.LanguageDefinition;
-import org.lwjgl.glfw.GLFW;
+import org.apache.commons.lang3.function.TriFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +35,7 @@ public class LocalizedBrowser {
     public final Japanese japanese = new Japanese();
     public final DependencyManager manager;
     public final KeyBinding changeLocale;
+    public static Map<LanguageDefinition, String> REVERSE_LANGUAGE_LOOKUP = ImmutableMap.of();
 
 
     protected LocalizedBrowser(Path configDir, KeyBinding changeLocale) {
@@ -60,10 +64,49 @@ public class LocalizedBrowser {
     }
 
     public void forceMemoize(String langCode) {
-        switch (langCode) {
-            case "ja_jp":
-                this.japanese.tokenizer.get();
+        if (langCode.equals("ja_jp")) {
+            this.japanese.tokenizer.get();
         }
+    }
+
+    /**
+     * Used for parsing inputted text through IME of current language
+     *
+     * @param string The input text (all of it)
+     * @param start the cursor/selection start, or -1 if there is no cursor/selection.
+     * @param end the cursor/selection end (inclusive), or -1 if there is no cursor/selection. If
+     * the [end] is equals to the [start], it's a cursor, otherwise it's a selection.
+     * @return Modified text based on the language
+     */
+    @UnstableApi
+    public IMEText imeParser(String string, int start, int end) {
+        return imeParser(string, start, end, ((AccessorLanguageManager) MinecraftClient.getInstance().getLanguageManager()).getCurrentLanguageCode());
+    }
+
+    /**
+     * Used for parsing inputted text through IME of current language
+     *
+     * @param string The input text (all of it)
+     * @param start the cursor/selection start, or -1 if there is no cursor/selection.
+     * @param end the cursor/selection end (inclusive), or -1 if there is no cursor/selection. If
+     * the [end] is equals to the [start], it's a cursor, otherwise it's a selection.
+     * @param languageDefinition The language being used
+     * @return Modified text based on the language
+     */
+    @UnstableApi
+    public IMEText imeParser(String string, int start, int end, LanguageDefinition languageDefinition) {
+        return imeParser(string, start, end, REVERSE_LANGUAGE_LOOKUP.get(languageDefinition));
+    }
+
+    // FIXME: Noooo boxing of primitives
+    private final Map<String, TriFunction<String, Integer, Integer, IMEText>> imeParsers = ImmutableMap.of(
+            "ja_jp", Japanese::imeParser
+    );
+
+    @UnstableApi
+    public IMEText imeParser(String string, int start, int end, String code) {
+        if (this.imeParsers.containsKey(code)) return this.imeParsers.get(code).apply(string, start, end);
+        return new IMEText(string, start, end);
     }
 
     /**
@@ -84,7 +127,7 @@ public class LocalizedBrowser {
      * @return The processed input
      */
     public String parseInput(String string, LanguageDefinition languageDefinition) {
-        return parseInput(string, languageDefinition.getCode());
+        return parseInput(string, REVERSE_LANGUAGE_LOOKUP.get(languageDefinition));
     }
 
     private final Map<String, Function<String, String>> inputParsers = ImmutableMap.of(
@@ -116,7 +159,7 @@ public class LocalizedBrowser {
      * @return A list of all possible inputs the user could do
      */
     public List<String> parseOutputs(String string, LanguageDefinition languageDefinition) {
-        return parseOutputs(string, languageDefinition.getCode());
+        return parseOutputs(string, REVERSE_LANGUAGE_LOOKUP.get(languageDefinition));
     }
 
     private final Map<String, Function<String, List<String>>> outputParsers = ImmutableMap.of(
@@ -271,6 +314,12 @@ public class LocalizedBrowser {
             // Add original
             array.add(text.toLowerCase(Locale.ROOT));
             return array;
+        }
+
+        @UnstableApi
+        public static IMEText imeParser(String string, int start, int end) {
+            var ime = Wanakana.toKanaIme(new ImeText(string, Math.min(start, end), Math.max(start, end)));
+            return new IMEText(ime.getText(), ime.getSelection());
         }
     }
 }

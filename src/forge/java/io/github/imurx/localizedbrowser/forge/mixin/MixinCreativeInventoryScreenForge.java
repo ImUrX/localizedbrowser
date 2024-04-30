@@ -11,15 +11,6 @@ public class MixinCreativeInventoryScreenForge {
     @ModifyVariable(
             method = "search",
             at = @At(value = "STORE"),
-            name = "search"
-    )
-    private String mixinNonSearchString(String original) {
-        return LocalizedBrowser.getInstance().parseInput(original);
-    }
-
-    @ModifyVariable(
-            method = "search",
-            at = @At(value = "STORE"),
             name = "s"
     )
     private String mixinSearchString(String original) {

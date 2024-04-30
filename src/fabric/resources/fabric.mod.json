@@ -8,11 +8,15 @@
     "ImUrX"
   ],
   "contributors": [
+    "jaredlll08",
     {
-        "name": "atilika/kuromoji",
-        "url": "https://github.com/atilika/kuromoji/"
+      "name": "atilika/kuromoji",
+      "url": "https://github.com/atilika/kuromoji/"
     },
-    "jaredlll08"
+    {
+      "name": "esnaultdev/wanakana-kt",
+      "url": "https://github.com/esnaultdev/wanakana-kt"
+    }
   ],
   "contact": {
     "homepage": "https://github.com/imurx/localizedbrowser",
@@ -33,6 +37,6 @@
     "localizedbrowser-common.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.19.2"
+    "minecraft": ">=1.20.5"
   }
 }
