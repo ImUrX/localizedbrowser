@@ -17,13 +17,13 @@ I suggest using Modrinth as a repository. [Use this official tutorial on how to 
 #### Fabric
 ```groovy
 dependencies {
-    modImplementation "maven.modrinth:localized-browser:VERSION-fabric"
+    modImplementation "maven.modrinth:better-locale:VERSION-fabric"
 }
 ```
 #### Forge (ForgeGradle)
 ```groovy
 dependencies {
-    implementation fg.deobf("maven.modrinth:localized-browser:VERSION-forge")
+    implementation fg.deobf("maven.modrinth:better-locale:VERSION-forge")
 }
 ```
 ### Architectury or similars
@@ -33,7 +33,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation "io.github.imurx.localizedbrowser:localizedbrowser:VERSION"
+    implementation "io.github.imurx.localizedbrowser:better-locale:VERSION"
 }
 ```
 

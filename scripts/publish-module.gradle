@@ -6,6 +6,11 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.java.srcDirs
+}
+
 afterEvaluate {
     publishing {
         publications {
@@ -15,6 +20,7 @@ afterEvaluate {
                 version = rootProject.mod_version
                 from components.java
                 artifact javadocJar
+                artifact sourcesJar
 
                 pom {
                     name = rootProject.archives_base_name
