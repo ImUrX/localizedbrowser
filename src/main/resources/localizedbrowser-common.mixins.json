@@ -3,13 +3,15 @@
   "package": "io.github.imurx.localizedbrowser.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "AccessorChatScreen",
     "AccessorLanguageManager",
     "AccessorTextFieldWidget",
+    "MixinChatScreen",
+    "MixinCreativeInventoryScreen",
     "MixinLanguageManager",
     "MixinMinecraftClient",
     "MixinRecipeBookWidget",
-    "MixinTextSearchProvider",
-    "MixinCreativeInventoryScreen"
+    "MixinTextSearchProvider"
   ],
   "mixins": [
   ],

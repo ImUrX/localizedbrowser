@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Mixin(LanguageManager.class)
 public class MixinLanguageManager {
@@ -38,7 +37,12 @@ public class MixinLanguageManager {
     ), method = "reload")
     private void onReload(ResourceManager manager, CallbackInfo ci) {
         ImmutableMap.Builder<LanguageDefinition, String> builder = ImmutableMap.builderWithExpectedSize(languageDefs.size());
-        builder.putAll(languageDefs.entrySet().stream().map(entry -> new AbstractMap.SimpleImmutableEntry<>(entry.getValue(), entry.getKey())).collect(Collectors.toSet()));
+        builder.putAll(languageDefs.entrySet().stream().map(entry ->
+                new AbstractMap.SimpleImmutableEntry<>(
+                        entry.getValue(),
+                        entry.getKey())
+                ).collect(Collectors.toSet())
+        );
         LocalizedBrowser.REVERSE_LANGUAGE_LOOKUP = builder.build();
     }
 }

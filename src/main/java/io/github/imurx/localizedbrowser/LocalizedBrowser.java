@@ -35,6 +35,7 @@ public class LocalizedBrowser {
     public final Japanese japanese = new Japanese();
     public final DependencyManager manager;
     public final KeyBinding changeLocale;
+    private boolean passthroughIme = false;
     public static Map<LanguageDefinition, String> REVERSE_LANGUAGE_LOOKUP = ImmutableMap.of();
 
 
@@ -60,6 +61,7 @@ public class LocalizedBrowser {
 
     public void reload() {
         LOGGER.info("Reloading...");
+        setPassthroughIme(false);
         this.japanese.reload();
     }
 
@@ -107,6 +109,18 @@ public class LocalizedBrowser {
     public IMEText imeParser(String string, int start, int end, String code) {
         if (this.imeParsers.containsKey(code)) return this.imeParsers.get(code).apply(string, start, end);
         return new IMEText(string, start, end);
+    }
+
+    public boolean hasImeParser() {
+        return this.imeParsers.containsKey(((AccessorLanguageManager) MinecraftClient.getInstance().getLanguageManager()).getCurrentLanguageCode());
+    }
+
+    public boolean hasImeParser(LanguageDefinition languageDefinition) {
+        return this.imeParsers.containsKey(REVERSE_LANGUAGE_LOOKUP.get(languageDefinition));
+    }
+
+    public boolean hasImeParser(String code) {
+        return this.imeParsers.containsKey(code);
     }
 
     /**
@@ -169,6 +183,19 @@ public class LocalizedBrowser {
     private List<String> parseOutputs(String string, String code) {
         if (this.outputParsers.containsKey(code)) return this.outputParsers.get(code).apply(string);
         return Common.parseOutputs(string);
+    }
+
+    public boolean isPassthroughIme() {
+        return passthroughIme;
+    }
+
+    private void setPassthroughIme(boolean bool) {
+        passthroughIme = bool;
+    }
+
+    public boolean togglePassthroughIme() {
+        setPassthroughIme(!isPassthroughIme());
+        return isPassthroughIme();
     }
 
 
