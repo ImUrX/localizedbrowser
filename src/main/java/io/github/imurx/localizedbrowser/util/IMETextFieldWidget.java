@@ -50,7 +50,8 @@ public class IMETextFieldWidget extends TextFieldWidget {
         if (locale.hasImeParser() && locale.changeLocale.matchesKey(keyCode, scanCode)) {
             boolean toggle = locale.togglePassthroughIme();
             sliceStart = toggle ? 0 : this.getCursor();
-            ignoreChar = true;
+            // If it doesn't use ctrl, ignore the next char as that's going to become a charTyped
+            if(!locale.usesCtrl.getAsBoolean()) ignoreChar = true;
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);

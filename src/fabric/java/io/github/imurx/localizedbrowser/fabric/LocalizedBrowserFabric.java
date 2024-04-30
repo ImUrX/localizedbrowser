@@ -2,6 +2,7 @@ package io.github.imurx.localizedbrowser.fabric;
 
 import de.siphalor.amecs.api.AmecsKeyBinding;
 import de.siphalor.amecs.api.KeyModifiers;
+import de.siphalor.amecs.impl.duck.IKeyBinding;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -11,7 +12,7 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class LocalizedBrowserFabric implements ModInitializer {
-    public final KeyBinding changeLocale = new AmecsKeyBinding(
+    public final AmecsKeyBinding changeLocale = new AmecsKeyBinding(
             "key.localizedbrowser.locale",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_SPACE,
@@ -21,7 +22,11 @@ public class LocalizedBrowserFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LocalizedBrowser.init(FabricLoader.getInstance().getConfigDir(), changeLocale);
+        LocalizedBrowser.init(
+                FabricLoader.getInstance().getConfigDir(),
+                changeLocale,
+                () -> ((IKeyBinding)changeLocale).amecs$getKeyModifiers().getControl()
+        );
         KeyBindingHelper.registerKeyBinding(this.changeLocale);
     }
 }

@@ -65,5 +65,13 @@ public class JapaneseTokenizerWrapper {
                 throw new RuntimeException(e);
             }
         }
+
+        public String getAllFeatures() {
+            try {
+                return (String) this.aClass.getMethod("getAllFeatures").invoke(this.ptr);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

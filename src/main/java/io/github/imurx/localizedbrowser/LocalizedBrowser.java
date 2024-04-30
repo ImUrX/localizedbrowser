@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -35,12 +36,14 @@ public class LocalizedBrowser {
     public final Japanese japanese = new Japanese();
     public final DependencyManager manager;
     public final KeyBinding changeLocale;
+    public final BooleanSupplier usesCtrl;
     private boolean passthroughIme = false;
     public static Map<LanguageDefinition, String> REVERSE_LANGUAGE_LOOKUP = ImmutableMap.of();
 
 
-    protected LocalizedBrowser(Path configDir, KeyBinding changeLocale) {
+    protected LocalizedBrowser(Path configDir, KeyBinding changeLocale, BooleanSupplier usesCtrl) {
         this.changeLocale = changeLocale;
+        this.usesCtrl = usesCtrl;
         this.manager = new DependencyManager(configDir.resolve(MOD_ID + "/cache"));
     }
 
@@ -49,8 +52,8 @@ public class LocalizedBrowser {
      *
      * @hidden
      */
-    public static void init(Path configDir, KeyBinding changeLocale) {
-        var mod = new LocalizedBrowser(configDir, changeLocale);
+    public static void init(Path configDir, KeyBinding changeLocale, BooleanSupplier usesCtrl) {
+        var mod = new LocalizedBrowser(configDir, changeLocale, usesCtrl);
         LOGGER.info("I now exist");
         INSTANCE = mod;
     }

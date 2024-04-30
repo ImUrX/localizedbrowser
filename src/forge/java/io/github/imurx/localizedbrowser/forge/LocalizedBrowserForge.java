@@ -23,7 +23,11 @@ public class LocalizedBrowserForge {
     );
 
     public LocalizedBrowserForge(IEventBus modBus) {
-        LocalizedBrowser.init(FMLPaths.CONFIGDIR.get(), this.changeLocale);
+        LocalizedBrowser.init(
+                FMLPaths.CONFIGDIR.get(),
+                this.changeLocale,
+                () -> this.changeLocale.getKeyModifier() == KeyModifier.CONTROL
+        );
         modBus.addListener(this::onRegisterKeyMappings);
     }
 
