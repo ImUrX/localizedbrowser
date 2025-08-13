@@ -31,6 +31,7 @@ public class IMETextFieldWidget extends TextFieldWidget {
         int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
         int min = Math.min(start, end);
         sliceStart = Math.min(min, sliceStart);
+        // FIXME: Needs to only parse text being given from sliceStart to cursor position so text in front doesn't get modified
         var text = LocalizedBrowser.getInstance().imeParser(this.getText().substring(sliceStart), min - sliceStart, Math.max(start, end) - sliceStart);
         this.setText(this.getText().substring(0, sliceStart) + text.text());
         this.setSelectionStart(text.selection().getStart() + sliceStart);
@@ -51,7 +52,14 @@ public class IMETextFieldWidget extends TextFieldWidget {
             sliceStart = toggle ? 0 : this.getCursor();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        boolean pressed = super.keyPressed(keyCode, scanCode, modifiers);
+        if (pressed) {
+            int start = this.getCursor();
+            int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
+            int min = Math.min(start, end);
+            sliceStart = Math.min(min, sliceStart);
+        }
+        return pressed;
     }
 
     @Override
