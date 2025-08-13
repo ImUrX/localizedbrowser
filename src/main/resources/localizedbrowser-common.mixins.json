@@ -6,6 +6,7 @@
     "AccessorChatScreen",
     "AccessorLanguageManager",
     "AccessorTextFieldWidget",
+    "MixinAbstractSignEditScreen",
     "MixinChatScreen",
     "MixinCreativeInventoryScreen",
     "MixinLanguageManager",

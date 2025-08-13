@@ -26,6 +26,12 @@ public class IMETextFieldWidget extends TextFieldWidget {
             return super.charTyped(chr, modifiers);
         }
 
+        {
+            int start = this.getCursor();
+            int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
+            int min = Math.min(start, end);
+            sliceStart = Math.min(min, sliceStart);
+        }
         if (!this.isActive() || !super.charTyped(chr, modifiers)) return false;
         int start = this.getCursor();
         int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
@@ -39,27 +45,15 @@ public class IMETextFieldWidget extends TextFieldWidget {
         return true;
     }
 
-    private long packInt2Long(int x, int y) {
-        return (((long) x) << 32)
-                | (y & 0xFFFF_FFFFL);
-    }
-
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         var locale = LocalizedBrowser.getInstance();
-        if (locale.hasImeParser() && locale.changeLocale.get(packInt2Long(keyCode, scanCode))) {
+        if (locale.hasImeParser() && locale.changeLocale.get(UselessMath.packInt2Long(keyCode, scanCode))) {
             boolean toggle = locale.togglePassthroughIme();
             sliceStart = toggle ? 0 : this.getCursor();
             return true;
         }
-        boolean pressed = super.keyPressed(keyCode, scanCode, modifiers);
-        if (pressed) {
-            int start = this.getCursor();
-            int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
-            int min = Math.min(start, end);
-            sliceStart = Math.min(min, sliceStart);
-        }
-        return pressed;
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
