@@ -10,8 +10,8 @@ import io.github.imurx.localizedbrowser.util.DependencyManager;
 import io.github.imurx.localizedbrowser.util.IMEText;
 import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
 import io.netty.util.internal.UnstableApi;
+import it.unimi.dsi.fastutil.longs.Long2BooleanFunction;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import org.apache.commons.lang3.function.TriFunction;
 import org.slf4j.Logger;
@@ -35,15 +35,14 @@ public class LocalizedBrowser {
     private static LocalizedBrowser INSTANCE;
     public final Japanese japanese = new Japanese();
     public final DependencyManager manager;
-    public final KeyBinding changeLocale;
-    public final BooleanSupplier usesCtrl;
+    // This is a long instead of a BiFunction<Int, Int, Boolean> just to reduce boxing
+    public final Long2BooleanFunction changeLocale;
     private boolean passthroughIme = false;
     public static Map<LanguageDefinition, String> REVERSE_LANGUAGE_LOOKUP = ImmutableMap.of();
 
 
-    protected LocalizedBrowser(Path configDir, KeyBinding changeLocale, BooleanSupplier usesCtrl) {
+    protected LocalizedBrowser(Path configDir, Long2BooleanFunction changeLocale) {
         this.changeLocale = changeLocale;
-        this.usesCtrl = usesCtrl;
         this.manager = new DependencyManager(configDir.resolve(MOD_ID + "/cache"));
     }
 
@@ -52,8 +51,8 @@ public class LocalizedBrowser {
      *
      * @hidden
      */
-    public static void init(Path configDir, KeyBinding changeLocale, BooleanSupplier usesCtrl) {
-        var mod = new LocalizedBrowser(configDir, changeLocale, usesCtrl);
+    public static void init(Path configDir, Long2BooleanFunction changeLocale) {
+        var mod = new LocalizedBrowser(configDir, changeLocale);
         LOGGER.info("I now exist");
         INSTANCE = mod;
     }

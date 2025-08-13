@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ChatScreen.class)
 public class MixinChatScreen {
-    @Redirect(method = "Lnet/minecraft/client/gui/screen/ChatScreen;init()V", at = @At(
+    @Redirect(method = "init()V", at = @At(
             value = "FIELD",
             target = "Lnet/minecraft/client/gui/screen/ChatScreen;chatField:Lnet/minecraft/client/gui/widget/TextFieldWidget;",
             opcode = 0xB5

@@ -9,8 +9,8 @@
     "MixinChatScreen",
     "MixinCreativeInventoryScreen",
     "MixinLanguageManager",
-    "MixinMinecraftClient",
     "MixinRecipeBookWidget",
+    "MixinSearchManager",
     "MixinTextSearchProvider"
   ],
   "mixins": [

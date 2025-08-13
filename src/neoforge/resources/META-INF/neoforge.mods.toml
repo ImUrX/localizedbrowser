@@ -15,11 +15,9 @@ Acknowledgements:
 atilika/kuromoji <https://github.com/atilika/kuromoji>
 esnaultdev/wanakana-kt <https://github.com/esnaultdev/wanakana-kt>
 '''
-description = '''
-Let's you search without using any graphemes!
-'''
+description = "Let's you search without using any graphemes!"
 logoFile = "icon.png"
-updateJSONURL = "https://api.modrinth.com/updates/localized-browser/forge_updates.json?neoforge=only"
+updateJSONURL = "https://api.modrinth.com/updates/better-locale/forge_updates.json?neoforge=only"
 displayTest = "IGNORE_ALL_VERSION"
 
 [[mixins]]
@@ -31,6 +29,6 @@ config="localizedbrowser-common.mixins.json"
 [[dependencies.localizedbrowser]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.20.5,)"
+versionRange = "[1.21.0,)"
 ordering = "NONE"
 side = "BOTH"

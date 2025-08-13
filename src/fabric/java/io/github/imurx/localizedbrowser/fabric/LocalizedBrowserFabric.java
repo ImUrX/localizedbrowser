@@ -24,8 +24,7 @@ public class LocalizedBrowserFabric implements ModInitializer {
     public void onInitialize() {
         LocalizedBrowser.init(
                 FabricLoader.getInstance().getConfigDir(),
-                changeLocale,
-                () -> ((IKeyBinding)changeLocale).amecs$getKeyModifiers().getControl()
+                (a) -> changeLocale.matchesKey((int) (a >> 32), (int) a)
         );
         KeyBindingHelper.registerKeyBinding(this.changeLocale);
     }

@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.AbstractMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Mixin(LanguageManager.class)
@@ -21,7 +22,7 @@ public class MixinLanguageManager {
     private Map<String, LanguageDefinition> languageDefs;
 
     @Inject(at = @At("RETURN"), method = "<init>")
-    private void onInit(String languageCode, CallbackInfo ci) {
+    private void onInit(String languageCode, Consumer reloadCallback, CallbackInfo ci) {
         LocalizedBrowser.getInstance().forceMemoize(languageCode);
     }
 

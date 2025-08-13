@@ -18,16 +18,10 @@ public class IMETextFieldWidget extends TextFieldWidget {
         super(textRenderer, x, y, width, height, copyFrom, text);
     }
 
-    private boolean ignoreChar = false;
     private int sliceStart = 0;
 
     @Override
     public boolean charTyped(char chr, int modifiers) {
-        if (ignoreChar) {
-            ignoreChar = false;
-            return true;
-        }
-
         if (LocalizedBrowser.getInstance().isPassthroughIme()) {
             return super.charTyped(chr, modifiers);
         }
@@ -44,14 +38,17 @@ public class IMETextFieldWidget extends TextFieldWidget {
         return true;
     }
 
+    private long packInt2Long(int x, int y) {
+        return (((long) x) << 32)
+                | (y & 0xFFFF_FFFFL);
+    }
+
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         var locale = LocalizedBrowser.getInstance();
-        if (locale.hasImeParser() && locale.changeLocale.matchesKey(keyCode, scanCode)) {
+        if (locale.hasImeParser() && locale.changeLocale.get(packInt2Long(keyCode, scanCode))) {
             boolean toggle = locale.togglePassthroughIme();
             sliceStart = toggle ? 0 : this.getCursor();
-            // If it doesn't use ctrl, ignore the next char as that's going to become a charTyped
-            if(!locale.usesCtrl.getAsBoolean()) ignoreChar = true;
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);

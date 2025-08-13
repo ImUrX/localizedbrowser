@@ -1,49 +1,38 @@
 plugins {
     id "java"
-    id "xyz.wagyourtail.unimined" version "1.2.4-SNAPSHOT" // reproducible builds loves me
-    id 'dev.vankka.dependencydownload.plugin' version '1.3.1'
-    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
-    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id "xyz.wagyourtail.unimined" version "1.4.1" // reproducible builds loves me
+    id 'dev.vankka.dependencydownload.plugin' version "2.0.0"
+    id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
+    id "com.gradleup.shadow" version "9.0.1"
 }
 apply from: "${rootDir}/scripts/publish-root.gradle"
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+version project.mod_version
+group project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+
+    withSourcesJar()
+}
 
 sourceSets {
-    fabric {
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
-    forge {
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
-}
-
-tasks.register("fabricJar", Jar) {
-    from sourceSets.fabric.output, sourceSets.main.output
-
-    archiveClassifier = "fabric"
-}
-
-tasks.register("forgeJar", Jar) {
-    from sourceSets.forge.output, sourceSets.main.output
-
-    archiveClassifier = "forge-dev"
+    fabric
+    neoforge
 }
 
 repositories {
-//    maven {
-//        name = "wagyourtail-forge-hotfix"
-//        url = "https://maven.wagyourtail.xyz/releases"
-//    }
     mavenCentral()
-    maven {
-        name = "sponge"
-        url = "https://repo.spongepowered.org/maven"
-    }
+    unimined.neoForgedMaven()
+    unimined.spongeMaven()
+    unimined.wagYourMaven("releases")
+    unimined.modrinthMaven()
     maven {
         name = 'kotlinforforge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
@@ -59,8 +48,18 @@ unimined.minecraft {
 
     mappings {
         intermediary()
-        yarn(project.mapping_version)
+        yarn project.mapping_version
 
+        stubs(["intermediary", "yarn"]) {
+            c(["net/minecraft/class_1496"]) {
+                m(["method_56680;()Lnet/minecraft/class_1263;", "getInventoryVanilla"])
+            }
+            c(["net/minecraft/class_329"]) {
+                m(["method_1759;(Lnet/minecraft/class_332;Lnet/minecraft/class_9779;)V", "renderHotbarVanilla"])
+            }
+        }
+
+        devNamespace "yarn"
         devFallbackNamespace "intermediary"
     }
 
@@ -68,97 +67,57 @@ unimined.minecraft {
 }
 
 unimined.minecraft(sourceSets.fabric) {
-    version project.minecraft_version
-
-    mappings {
-        yarn(project.mapping_version)
-    }
+    combineWith(sourceSets.main)
 
     fabric {
         loader project.fabric_loader_version
     }
+
+    defaultRemapJar = true
 }
 
-unimined.minecraft(sourceSets.forge) {
-    version project.minecraft_version
+unimined.minecraft(sourceSets.neoforge) {
+    combineWith(sourceSets.main)
 
-    mappings {
-        intermediary()
-        yarn(project.mapping_version)
-        stub.withMappings("intermediary", ["yarn"]) {
-            c("net/minecraft/class_1496", []) {
-                m("method_56680", "()Lnet/minecraft/class_1263;", ["getInventoryVanilla"])
-            }
-            c("net/minecraft/class_329", []) {
-                m("method_1759", "(Lnet/minecraft/class_332;F)V", ["renderHotbarVanilla"])
-            }
-        }
-        devFallbackNamespace "intermediary"
-    }
-
-    neoForged {
+    neoForge {
         loader project.neoforge_version
-        mixinConfig "localizedbrowser.mixins.json"
     }
+
+    minecraftRemapper.config {
+        // neoforge adds 1 conflict, where 2 interfaces have a method with the same name on yarn/mojmap,
+        // but the method has different names in the intermediary mappings.
+        // this is a conflict because they have a class that extends both interfaces.
+        // this shouldn't be a problem as long as named mappings don't make the name of those 2 methods different.
+        ignoreConflicts(true)
+    }
+
+    defaultRemapJar = true
 }
 
 configurations {
     mainImplementation
-    implementation {
-        extendsFrom forgeImplementation
-        extendsFrom fabricImplementation
-    }
-    shadowForge
-}
-
-sourceSets {
-    main {
-        compileClasspath += configurations.mainImplementation
-        runtimeClasspath += configurations.mainImplementation
-    }
 }
 
 dependencies {
     // we need this in main where it isn't by default
-    mainImplementation "org.spongepowered:mixin:0.8.5"
+    implementation "org.spongepowered:mixin:0.8.5-SNAPSHOT"
+    compileOnly "io.github.llamalad7:mixinextras-common:0.3.2"
+    compileOnly "org.ow2.asm:asm:9.5"
 
     runtimeDownload "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
 
     implementation "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
     fabricImplementation(implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32")
 
-    fabricImplementation(forgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
+    fabricImplementation(neoforgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
     fabricModImplementation fabricApi.fabricModule("fabric-api-base",  project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-key-binding-api-v1",  project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-resource-loader-v0",  project.fabric_api_version)
     fabricModImplementation "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
     fabricInclude "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
-    fabricInclude "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"
+    fabricInclude(neoforgeInclude("dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
 
-    forgeImplementation 'thedarkcolour:kotlinforforge-neoforge:5.0.1'
-    shadowForge "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"
-}
-
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
-task shadowForge(type: ShadowJar) {
-    from forgeJar.archiveFile
-    exclude "fabric.mod.json"
-
-    configurations = [project.configurations.shadowForge]
-    archiveClassifier = "dev-forge-shadow"
-
-    manifest {
-        attributes([
-                "MixinConfigs": "localizedbrowser.mixins.json,localizedbrowser-common.mixins.json"
-        ])
-    }
-}
-
-remapForgeJar {
-    inputFile = shadowForge.archiveFile
-    dependsOn shadowForge
-    archiveClassifier = "forge"
+    neoforgeImplementation 'thedarkcolour:kotlinforforge-neoforge:5.9.0'
 }
 
 processFabricResources {
@@ -169,7 +128,7 @@ processFabricResources {
     }
 }
 
-processForgeResources {
+processNeoforgeResources {
     inputs.property "version", project.version
 
     filesMatching("META-INF/neoforge.mods.toml") {
@@ -177,15 +136,14 @@ processForgeResources {
     }
 }
 
-jar.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
+//jar.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 compileFabricJava.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
-compileForgeJava.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
+compileNeoforgeJava.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 shadowJar.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 javadoc.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 
 jar {
-    from project.file("LICENSE-APACHE")
-    from project.file("LICENSE-MIT")
+    enabled = false
 }
 
 javadoc {

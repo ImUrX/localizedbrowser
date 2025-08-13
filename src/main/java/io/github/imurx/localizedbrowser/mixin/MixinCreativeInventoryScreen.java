@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(CreativeInventoryScreen.class)
 public class MixinCreativeInventoryScreen {
-    @Redirect(method = "Lnet/minecraft/client/gui/screen/ingame/CreativeInventoryScreen;init()V", at = @At(value = "NEW", target = "net/minecraft/client/gui/widget/TextFieldWidget"))
+    @Redirect(method = "init()V", at = @At(value = "NEW", target = "net/minecraft/client/gui/widget/TextFieldWidget"))
     private TextFieldWidget declareFieldWidget(TextRenderer textRenderer, int x, int y, int width, int height, Text text) {
         return new IMETextFieldWidget(textRenderer, x, y, width, height, text);
     }
