@@ -19,12 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -77,9 +73,9 @@ public class LocalizedBrowser {
      * Used for parsing inputted text through IME of current language
      *
      * @param string The input text (all of it)
-     * @param start the cursor/selection start, or -1 if there is no cursor/selection.
-     * @param end the cursor/selection end (inclusive), or -1 if there is no cursor/selection. If
-     * the [end] is equals to the [start], it's a cursor, otherwise it's a selection.
+     * @param start  the cursor/selection start, or -1 if there is no cursor/selection.
+     * @param end    the cursor/selection end (inclusive), or -1 if there is no cursor/selection. If
+     *               the [end] is equals to the [start], it's a cursor, otherwise it's a selection.
      * @return Modified text based on the language
      */
     @UnstableApi
@@ -90,10 +86,10 @@ public class LocalizedBrowser {
     /**
      * Used for parsing inputted text through IME of current language
      *
-     * @param string The input text (all of it)
-     * @param start the cursor/selection start, or -1 if there is no cursor/selection.
-     * @param end the cursor/selection end (inclusive), or -1 if there is no cursor/selection. If
-     * the [end] is equals to the [start], it's a cursor, otherwise it's a selection.
+     * @param string             The input text (all of it)
+     * @param start              the cursor/selection start, or -1 if there is no cursor/selection.
+     * @param end                the cursor/selection end (inclusive), or -1 if there is no cursor/selection. If
+     *                           the [end] is equals to the [start], it's a cursor, otherwise it's a selection.
      * @param languageDefinition The language being used
      * @return Modified text based on the language
      */
@@ -238,6 +234,10 @@ public class LocalizedBrowser {
 
     public static class Japanese {
         private Supplier<JapaneseTokenizerWrapper> tokenizer;
+        private final Map<String, String> customKanjiDictionary = Map.of(
+                "金", "きん",
+                "白色", "しろいろ"
+        );
 
         public Japanese() {
             this.reload();
@@ -291,13 +291,16 @@ public class LocalizedBrowser {
                 List<String> strings = new ArrayList<>();
                 String pronunciation = token.getPronunciation(),
                         surface = token.getSurface();
-                if(!Japanese.containsKanji(surface)) {
+                if (!Japanese.containsKanji(surface)) {
                     strings.add(surface);
                 } else {
                     String hiragana = Wanakana.toHiragana(pronunciation);
                     String romaji = Wanakana.toHiragana(Wanakana.toRomaji(pronunciation));
                     strings.add(hiragana);
-                    if(!hiragana.equals(romaji)) strings.add(romaji);
+                    if (!hiragana.equals(romaji)) strings.add(romaji);
+
+                    String alt = customKanjiDictionary.get(surface);
+                    if (alt != null) strings.add(alt);
                 }
                 return strings;
             }).toList();
