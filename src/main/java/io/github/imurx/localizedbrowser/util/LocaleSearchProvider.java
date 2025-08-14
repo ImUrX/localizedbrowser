@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface LocaleSearchProvider<T> {
-    static final ThreadLocal<Boolean> searchOverwrite = ThreadLocal.withInitial(() -> false);
+    ThreadLocal<Boolean> searchOverwrite = ThreadLocal.withInitial(() -> false);
 
     static <K> TextSearchProvider<K> createProvider(Function<K, Stream<String>> textsGetter,
                                                     Function<K, Stream<Identifier>> identifiersGetter,

@@ -1,11 +1,9 @@
 package io.github.imurx.localizedbrowser.mixin;
 
-import io.github.imurx.localizedbrowser.LocalizedBrowser;
 import io.github.imurx.localizedbrowser.util.SelectionManagerHelper;
-import io.github.imurx.localizedbrowser.util.UselessMath;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.AbstractSignEditScreen;
+import net.minecraft.client.gui.screen.ingame.BookEditScreen;
 import net.minecraft.client.util.SelectionManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
@@ -18,25 +16,48 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AbstractSignEditScreen.class)
-public abstract class MixinAbstractSignEditScreen extends Screen {
+@Mixin(BookEditScreen.class)
+public class MixinBookEditScreen extends Screen {
     @Unique
-    public final SelectionManagerHelper betterlocale$helper = new SelectionManagerHelper(() -> this.selectionManager);
+    public final SelectionManagerHelper betterlocale$helper = new SelectionManagerHelper(
+            () -> this.signing ? this.bookTitleSelectionManager : this.currentPageSelectionManager
+    );
 
-    @Shadow
-    private SelectionManager selectionManager;
     @Shadow
     @Final
-    private String[] messages;
+    private static int WIDTH;
     @Shadow
-    private int currentRow;
+    @Final
+    private SelectionManager currentPageSelectionManager;
+    @Shadow
+    @Final
+    private SelectionManager bookTitleSelectionManager;
+    @Shadow
+    private boolean signing;
+    @Shadow
+    private boolean dirty;
+    @Shadow
+    private String title;
 
-    protected MixinAbstractSignEditScreen(Text title) {
+    protected MixinBookEditScreen(Text title) {
         super(title);
     }
 
     @Shadow
-    private void setCurrentRowMessage(String message) {
+    private String getCurrentPageContent() {
+        return null;
+    }
+
+    @Shadow
+    private void setPageContent(String newContent) {
+    }
+
+    @Shadow
+    private void updateButtons() {
+    }
+
+    @Shadow
+    private void invalidatePageContent() {
     }
 
     @Inject(method = "charTyped", at = @At("HEAD"))
@@ -47,7 +68,14 @@ public abstract class MixinAbstractSignEditScreen extends Screen {
     @Inject(method = "charTyped", at = @At("RETURN"))
     private void onCharTypedReturn(char chr, int modifiers, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValueZ()) {
-            betterlocale$helper.onCharTyped(this.messages[this.currentRow], this::setCurrentRowMessage);
+            if (this.signing) {
+                betterlocale$helper.onCharTyped(this.title, (s) -> this.title = s);
+                updateButtons();
+                this.dirty = true;
+            } else {
+                betterlocale$helper.onCharTyped(this.getCurrentPageContent(), this::setPageContent);
+                invalidatePageContent();
+            }
         }
     }
 
@@ -60,16 +88,11 @@ public abstract class MixinAbstractSignEditScreen extends Screen {
         }
     }
 
-    @Inject(method = "renderSign", at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screen/ingame/AbstractSignEditScreen;renderSignText(Lnet/minecraft/client/gui/DrawContext;)V"
-    ))
-    private void onRenderSign(DrawContext context, CallbackInfo ci) {
+    @Inject(method = "renderBackground", at = @At("TAIL"))
+    private void onRenderBackground(DrawContext ctx, int i, int j, float f, CallbackInfo ci) {
         if (!betterlocale$helper.isIme()) {
-            final float x = 44, y = -28, z = 5;
-            context.getMatrices().translate(x, y, z);
-            context.fill(0, 0, 8, 8, Colors.RED);
-            context.getMatrices().translate(-x, -y, -z);
+            final int x0 = ((this.width - WIDTH) / 2) + (WIDTH - 24), y0 = 2;
+            ctx.fill(x0, y0, x0 + 8, y0 + 8, Colors.RED);
         }
     }
 }

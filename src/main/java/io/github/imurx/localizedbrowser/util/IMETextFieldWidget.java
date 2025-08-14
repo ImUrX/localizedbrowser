@@ -5,6 +5,7 @@ import io.github.imurx.localizedbrowser.mixin.AccessorTextFieldWidget;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.util.SelectionManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +27,7 @@ public class IMETextFieldWidget extends TextFieldWidget {
             return super.charTyped(chr, modifiers);
         }
 
+        // Try getting where we started originally typing
         {
             int start = this.getCursor();
             int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
@@ -33,13 +35,15 @@ public class IMETextFieldWidget extends TextFieldWidget {
             sliceStart = Math.min(min, sliceStart);
         }
         if (!this.isActive() || !super.charTyped(chr, modifiers)) return false;
+        // Check if we went back after typing for some reason
         int start = this.getCursor();
         int end = ((AccessorTextFieldWidget) this).getSelectionEnd();
         int min = Math.min(start, end);
+        int max = Math.max(start, end);
         sliceStart = Math.min(min, sliceStart);
-        // FIXME: Needs to only parse text being given from sliceStart to cursor position so text in front doesn't get modified
-        var text = LocalizedBrowser.getInstance().imeParser(this.getText().substring(sliceStart), min - sliceStart, Math.max(start, end) - sliceStart);
-        this.setText(this.getText().substring(0, sliceStart) + text.text());
+        // Slice from last sliceStart to the max cursor position
+        var text = LocalizedBrowser.getInstance().imeParser(this.getText().substring(sliceStart, max), min - sliceStart, max - sliceStart);
+        this.setText(this.getText().substring(0, sliceStart) + text.text() + this.getText().substring(max));
         this.setSelectionStart(text.selection().getStart() + sliceStart);
         this.setSelectionEnd(text.selection().getEndInclusive() + sliceStart);
         return true;
