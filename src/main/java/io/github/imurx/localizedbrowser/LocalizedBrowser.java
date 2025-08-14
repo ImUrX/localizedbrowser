@@ -9,11 +9,11 @@ import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import io.github.imurx.localizedbrowser.util.DependencyManager;
 import io.github.imurx.localizedbrowser.util.IMEText;
 import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
-import io.netty.util.internal.UnstableApi;
 import it.unimi.dsi.fastutil.longs.Long2BooleanFunction;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import org.apache.commons.lang3.function.TriFunction;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class LocalizedBrowser {
      *               the [end] is equals to the [start], it's a cursor, otherwise it's a selection.
      * @return Modified text based on the language
      */
-    @UnstableApi
+    @ApiStatus.Experimental
     public IMEText imeParser(String string, int start, int end) {
         return imeParser(string, start, end, ((AccessorLanguageManager) MinecraftClient.getInstance().getLanguageManager()).getCurrentLanguageCode());
     }
@@ -93,7 +93,7 @@ public class LocalizedBrowser {
      * @param languageDefinition The language being used
      * @return Modified text based on the language
      */
-    @UnstableApi
+    @ApiStatus.Experimental
     public IMEText imeParser(String string, int start, int end, LanguageDefinition languageDefinition) {
         return imeParser(string, start, end, REVERSE_LANGUAGE_LOOKUP.get(languageDefinition));
     }
@@ -103,7 +103,7 @@ public class LocalizedBrowser {
             "ja_jp", Japanese::imeParser
     );
 
-    @UnstableApi
+    @ApiStatus.Experimental
     public IMEText imeParser(String string, int start, int end, String code) {
         if (this.imeParsers.containsKey(code)) return this.imeParsers.get(code).apply(string, start, end);
         return new IMEText(string, start, end);
@@ -348,7 +348,7 @@ public class LocalizedBrowser {
             return array;
         }
 
-        @UnstableApi
+        @ApiStatus.Experimental
         public static IMEText imeParser(String string, int start, int end) {
             var ime = Wanakana.toKanaIme(new ImeText(string, Math.min(start, end), Math.max(start, end)));
             return new IMEText(ime.getText(), ime.getSelection());

@@ -45,6 +45,7 @@ repositories {
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/"
     }
+    maven { url "https://maven.shedaniel.me" }
 //    maven {
 //        name = "blamejared"
 //        url = "https://maven.blamejared.com/"
@@ -53,6 +54,10 @@ repositories {
 
 configurations {
     mainImplementation
+    modCompileOnly
+    compileOnly.extendsFrom modCompileOnly
+//    neoforgeModImplementation
+//    neoforgeImplementation.extendsFrom neoforgeModImplementation
     fabricModRuntimeOnly
     fabricRuntimeOnly.extendsFrom fabricModRuntimeOnly
 }
@@ -61,6 +66,7 @@ unimined.minecraft {
     version project.minecraft_version
 
     mappings {
+        mojmap()
         intermediary()
         yarn project.mapping_version
 
@@ -76,8 +82,14 @@ unimined.minecraft {
         devNamespace "yarn"
     }
 
-    mods.modImplementation {
-        namespace "intermediary"
+    mods {
+        modImplementation {
+            namespace "intermediary"
+        }
+        remap(configurations.modCompileOnly) {
+            namespace "intermediary"
+            catchAWNamespaceAssertion()
+        }
     }
 
     defaultRemapJar = false
@@ -114,6 +126,12 @@ unimined.minecraft(sourceSets.neoforge) {
         ignoreConflicts(true)
     }
 
+//    mods {
+//        remap(configurations.neoforgeModImplementation) {
+//            namespace "mojmap"
+//        }
+//    }
+
     defaultRemapJar = true
 }
 
@@ -134,12 +152,16 @@ dependencies {
 //    fabricModRuntimeOnly "dev.emi:emi-fabric:${project.emi_version}"
 //    neoforgeRuntimeOnly "dev.emi:emi-neoforge:${project.emi_version}"
     // Controlling
-    modImplementation "maven.modrinth:controlling:${project.controlling_version}-fabric,${project.minecraft_version}"
+//    modImplementation "maven.modrinth:controlling:${project.controlling_version}-fabric,${project.minecraft_version}"
     modImplementation "maven.modrinth:searchables:1.0.5-fabric,${project.minecraft_version}"
 //    fabricModRuntimeOnly "maven.modrinth:controlling:${project.controlling_version}-fabric,${project.minecraft_version}"
 //    fabricModRuntimeOnly "maven.modrinth:searchables:1.0.5-fabric,${project.minecraft_version}"
 //    neoforgeRuntimeOnly "maven.modrinth:controlling:${project.controlling_version}-neoforge,${project.minecraft_version}"
 //    neoforgeRuntimeOnly "maven.modrinth:searchables:1.0.5-neoforge,${project.minecraft_version}"
+    // REI
+    modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+//    neoforgeImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
+//    fabricModRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     fabricImplementation(neoforgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
     fabricModImplementation fabricApi.fabricModule("fabric-api-base", project.fabric_api_version)

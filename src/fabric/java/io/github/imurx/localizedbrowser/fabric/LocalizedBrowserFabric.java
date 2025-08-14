@@ -2,7 +2,6 @@ package io.github.imurx.localizedbrowser.fabric;
 
 import de.siphalor.amecs.api.AmecsKeyBinding;
 import de.siphalor.amecs.api.KeyModifiers;
-import de.siphalor.amecs.impl.duck.IKeyBinding;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;

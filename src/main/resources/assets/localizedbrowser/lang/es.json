@@ -1,3 +1,5 @@
 {
-  "key.localizedbrowser.locale": "Habilitar/deshabilitar el IME"
+  "key.localizedbrowser.locale": "Habilitar/deshabilitar el IME",
+  "localizedbrowser.rei.name": "Navegador traducido",
+  "localizedbrowser.rei.desc": "Normaliza las tildes en texto a nada para buscar facilmente"
 }

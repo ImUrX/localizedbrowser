@@ -1,3 +1,5 @@
 {
-  "key.localizedbrowser.locale": "Toggle IME"
+  "key.localizedbrowser.locale": "Toggle IME",
+  "localizedbrowser.rei.name": "Localized Browser",
+  "localizedbrowser.rei.desc": "Normalizes all unicode graphemes"
 }

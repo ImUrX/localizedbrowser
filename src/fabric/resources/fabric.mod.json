@@ -34,6 +34,9 @@
   "entrypoints": {
     "main": [
       "io.github.imurx.localizedbrowser.fabric.LocalizedBrowserFabric"
+    ],
+    "rei_client": [
+      "io.github.imurx.localizedbrowser.compat.rei.REILocalizedPlugin"
     ]
   },
   "mixins": [
