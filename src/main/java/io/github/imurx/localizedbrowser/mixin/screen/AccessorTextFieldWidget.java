@@ -1,4 +1,4 @@
-package io.github.imurx.localizedbrowser.mixin;
+package io.github.imurx.localizedbrowser.mixin.screen;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;

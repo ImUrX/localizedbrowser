@@ -3,19 +3,22 @@
   "package": "io.github.imurx.localizedbrowser.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "AccessorChatScreen",
     "AccessorLanguageManager",
-    "AccessorTextFieldWidget",
-    "MixinAbstractSignEditScreen",
-    "MixinBookEditScreen",
-    "MixinChatScreen",
-    "MixinCreativeInventoryScreen",
     "MixinLanguageManager",
-    "MixinRecipeBookWidget",
     "MixinSearchManager",
-    "MixinTextSearchProvider"
-  ],
-  "mixins": [
+    "MixinTextSearchProvider",
+    "controlling.MixinAutoCompletingEditBox",
+    "controlling.MixinSearchableType",
+    "emi.MixinEmiSearch",
+    "emi.MixinEmiSearchWidget",
+    "screen.AccessorChatScreen",
+    "screen.AccessorTextFieldWidget",
+    "screen.MixinAbstractSignEditScreen",
+    "screen.MixinBookEditScreen",
+    "screen.MixinChatScreen",
+    "screen.MixinCreativeInventoryScreen",
+    "screen.MixinRecipeBookWidget",
+    "screen.MixinTextFieldWidget"
   ],
   "injectors": {
     "defaultRequire": 1

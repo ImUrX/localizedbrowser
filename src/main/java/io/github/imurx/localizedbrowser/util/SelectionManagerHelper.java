@@ -20,14 +20,21 @@ public class SelectionManagerHelper {
         this(selectionManager, true);
     }
 
-    public void updateStart() {
+    public void updateStart(boolean ignoreStart) {
         if (!this.isIme()) return;
 
         var selectionManager = this.selectionManager.get();
         int start = selectionManager.getSelectionStart();
         int end = selectionManager.getSelectionEnd();
         int min = Math.min(start, end);
-        sliceStart = Math.min(min, sliceStart);
+        if (ignoreStart) {
+            sliceStart = min;
+        } else {
+            sliceStart = Math.min(min, sliceStart);
+        }
+    }
+    public void updateStart() {
+        updateStart(false);
     }
 
     public void onCharTyped(String curText, Consumer<String> updateText) {
@@ -50,8 +57,7 @@ public class SelectionManagerHelper {
 
         var locale = LocalizedBrowser.getInstance();
         if (locale.hasImeParser() && locale.changeLocale.get(UselessMath.packInt2Long(keyCode, scanCode))) {
-            boolean toggle = locale.togglePassthroughIme();
-            sliceStart = toggle ? 0 : this.selectionManager.get().getSelectionStart();
+            sliceStart = locale.togglePassthroughIme() ? 0 : this.selectionManager.get().getSelectionStart();
             return true;
         }
 

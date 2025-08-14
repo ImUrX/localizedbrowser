@@ -1,15 +1,19 @@
 package io.github.imurx.localizedbrowser.util;
 
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
-import io.github.imurx.localizedbrowser.mixin.AccessorTextFieldWidget;
+import io.github.imurx.localizedbrowser.mixin.screen.AccessorTextFieldWidget;
+import io.github.imurx.localizedbrowser.mixin.screen.MixinTextFieldWidget;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.SelectionManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Replaced for just {@link MixinTextFieldWidget}
+ */
+@Deprecated
 public class IMETextFieldWidget extends TextFieldWidget {
     public IMETextFieldWidget(TextRenderer textRenderer, int x, int y, int width, int height, Text text) {
         super(textRenderer, x, y, width, height, text);

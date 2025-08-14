@@ -1,5 +1,6 @@
-package io.github.imurx.localizedbrowser.mixin;
+package io.github.imurx.localizedbrowser.mixin.screen;
 
+import io.github.imurx.localizedbrowser.util.IMEModeAccessor;
 import io.github.imurx.localizedbrowser.util.SelectionManagerHelper;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BookEditScreen.class)
-public class MixinBookEditScreen extends Screen {
+public class MixinBookEditScreen extends Screen implements IMEModeAccessor {
     @Unique
     public final SelectionManagerHelper betterlocale$helper = new SelectionManagerHelper(
             () -> this.signing ? this.bookTitleSelectionManager : this.currentPageSelectionManager
@@ -58,6 +59,27 @@ public class MixinBookEditScreen extends Screen {
 
     @Shadow
     private void invalidatePageContent() {
+    }
+
+    @Override
+    public boolean betterlocale$isIme() {
+        return betterlocale$helper.isIme();
+    }
+    @Override
+    public void betterlocale$setImeMode(boolean imeMode) {
+        betterlocale$helper.setIme(imeMode);
+    }
+
+    @Inject(method = "keyPressedEditMode", at = @At("RETURN"))
+    private void onKeyPressedEditMode(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+        if(!cir.getReturnValueZ()) return;
+
+        betterlocale$helper.updateStart(true);
+    }
+
+    @Inject(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SelectionManager;moveCursorTo(IZ)V", shift = At.Shift.AFTER))
+    private void onMouseClicked(double d, double e, int i, CallbackInfoReturnable<Boolean> cir) {
+        betterlocale$helper.updateStart(true);
     }
 
     @Inject(method = "charTyped", at = @At("HEAD"))

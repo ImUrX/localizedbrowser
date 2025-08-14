@@ -41,6 +41,20 @@ repositories {
         url "https://maven.siphalor.de/"
         name "Siphalor's Maven"
     }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
+//    maven {
+//        name = "blamejared"
+//        url = "https://maven.blamejared.com/"
+//    }
+}
+
+configurations {
+    mainImplementation
+    fabricModRuntimeOnly
+    fabricRuntimeOnly.extendsFrom fabricModRuntimeOnly
 }
 
 unimined.minecraft {
@@ -60,7 +74,10 @@ unimined.minecraft {
         }
 
         devNamespace "yarn"
-        devFallbackNamespace "intermediary"
+    }
+
+    mods.modImplementation {
+        namespace "intermediary"
     }
 
     defaultRemapJar = false
@@ -71,6 +88,12 @@ unimined.minecraft(sourceSets.fabric) {
 
     fabric {
         loader project.fabric_loader_version
+    }
+
+    mods {
+        remap(configurations.fabricModRuntimeOnly) {
+            namespace "intermediary"
+        }
     }
 
     defaultRemapJar = true
@@ -94,14 +117,10 @@ unimined.minecraft(sourceSets.neoforge) {
     defaultRemapJar = true
 }
 
-configurations {
-    mainImplementation
-}
-
 dependencies {
     // we need this in main where it isn't by default
     implementation "org.spongepowered:mixin:0.8.5-SNAPSHOT"
-    compileOnly "io.github.llamalad7:mixinextras-common:0.3.2"
+    compileOnly "io.github.llamalad7:mixinextras-common:0.5.0"
     compileOnly "org.ow2.asm:asm:9.5"
 
     runtimeDownload "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
@@ -109,10 +128,23 @@ dependencies {
     implementation "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
     fabricImplementation(implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32")
 
+    fabricModRuntimeOnly fabricApi.fabric(project.fabric_api_version)
+    // EMI
+    modImplementation "dev.emi:emi-xplat-intermediary:${project.emi_version}"
+//    fabricModRuntimeOnly "dev.emi:emi-fabric:${project.emi_version}"
+//    neoforgeRuntimeOnly "dev.emi:emi-neoforge:${project.emi_version}"
+    // Controlling
+    modImplementation "maven.modrinth:controlling:${project.controlling_version}-fabric,${project.minecraft_version}"
+    modImplementation "maven.modrinth:searchables:1.0.5-fabric,${project.minecraft_version}"
+//    fabricModRuntimeOnly "maven.modrinth:controlling:${project.controlling_version}-fabric,${project.minecraft_version}"
+//    fabricModRuntimeOnly "maven.modrinth:searchables:1.0.5-fabric,${project.minecraft_version}"
+//    neoforgeRuntimeOnly "maven.modrinth:controlling:${project.controlling_version}-neoforge,${project.minecraft_version}"
+//    neoforgeRuntimeOnly "maven.modrinth:searchables:1.0.5-neoforge,${project.minecraft_version}"
+
     fabricImplementation(neoforgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
-    fabricModImplementation fabricApi.fabricModule("fabric-api-base",  project.fabric_api_version)
-    fabricModImplementation fabricApi.fabricModule("fabric-key-binding-api-v1",  project.fabric_api_version)
-    fabricModImplementation fabricApi.fabricModule("fabric-resource-loader-v0",  project.fabric_api_version)
+    fabricModImplementation fabricApi.fabricModule("fabric-api-base", project.fabric_api_version)
+    fabricModImplementation fabricApi.fabricModule("fabric-key-binding-api-v1", project.fabric_api_version)
+    fabricModImplementation fabricApi.fabricModule("fabric-resource-loader-v0", project.fabric_api_version)
     fabricModImplementation "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
     fabricInclude "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
     fabricInclude(neoforgeInclude("dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))

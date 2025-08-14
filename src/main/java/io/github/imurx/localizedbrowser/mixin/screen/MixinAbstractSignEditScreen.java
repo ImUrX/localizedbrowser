@@ -1,8 +1,9 @@
-package io.github.imurx.localizedbrowser.mixin;
+package io.github.imurx.localizedbrowser.mixin.screen;
 
-import io.github.imurx.localizedbrowser.LocalizedBrowser;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import io.github.imurx.localizedbrowser.util.IMEModeAccessor;
 import io.github.imurx.localizedbrowser.util.SelectionManagerHelper;
-import io.github.imurx.localizedbrowser.util.UselessMath;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractSignEditScreen;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractSignEditScreen.class)
-public abstract class MixinAbstractSignEditScreen extends Screen {
+public abstract class MixinAbstractSignEditScreen extends Screen implements IMEModeAccessor {
     @Unique
     public final SelectionManagerHelper betterlocale$helper = new SelectionManagerHelper(() -> this.selectionManager);
 
@@ -31,12 +32,30 @@ public abstract class MixinAbstractSignEditScreen extends Screen {
     @Shadow
     private int currentRow;
 
+    @Override
+    public boolean betterlocale$isIme() {
+        return betterlocale$helper.isIme();
+    }
+    @Override
+    public void betterlocale$setImeMode(boolean imeMode) {
+        betterlocale$helper.setIme(imeMode);
+    }
+
     protected MixinAbstractSignEditScreen(Text title) {
         super(title);
     }
 
     @Shadow
     private void setCurrentRowMessage(String message) {
+    }
+
+    @WrapOperation(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SelectionManager;handleSpecialKey(I)Z"))
+    private boolean onHandleSpecialKey(SelectionManager instance, int keyCode, Operation<Boolean> original) {
+        boolean res = original.call(instance, keyCode);
+        if(res) {
+            betterlocale$helper.updateStart(true);
+        }
+        return res;
     }
 
     @Inject(method = "charTyped", at = @At("HEAD"))

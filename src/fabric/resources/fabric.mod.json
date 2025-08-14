@@ -11,11 +11,15 @@
     "jaredlll08",
     {
       "name": "atilika/kuromoji",
-      "url": "https://github.com/atilika/kuromoji/"
+      "contact": {
+        "sources": "https://github.com/atilika/kuromoji/"
+      }
     },
     {
       "name": "esnaultdev/wanakana-kt",
-      "url": "https://github.com/esnaultdev/wanakana-kt"
+      "contact": {
+        "sources": "https://github.com/esnaultdev/wanakana-kt"
+      }
     }
   ],
   "contact": {
