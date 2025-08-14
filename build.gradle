@@ -160,7 +160,7 @@ dependencies {
 //    neoforgeRuntimeOnly "maven.modrinth:searchables:1.0.5-neoforge,${project.minecraft_version}"
     // REI
     modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-//    neoforgeImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
+    neoforgeImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
 //    fabricModRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     fabricImplementation(neoforgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
