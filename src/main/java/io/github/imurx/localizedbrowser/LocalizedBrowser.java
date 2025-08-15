@@ -9,6 +9,8 @@ import io.github.imurx.localizedbrowser.mixin.AccessorLanguageManager;
 import io.github.imurx.localizedbrowser.util.DependencyManager;
 import io.github.imurx.localizedbrowser.util.IMEText;
 import io.github.imurx.localizedbrowser.util.JapaneseTokenizerWrapper;
+import it.unimi.dsi.fastutil.chars.CharArrays;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanFunction;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.CharBuffer;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.*;
@@ -24,6 +27,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class LocalizedBrowser {
     public static final String MOD_ID = "localizedbrowser";
@@ -175,7 +180,8 @@ public class LocalizedBrowser {
     }
 
     private final Map<String, Function<String, List<String>>> outputParsers = ImmutableMap.of(
-            "ja_jp", japanese::parseOutputs
+            "ja_jp", japanese::parseOutputs,
+            "de_de", German::parseOutputs
     );
 
     private List<String> parseOutputs(String string, String code) {
@@ -229,6 +235,33 @@ public class LocalizedBrowser {
                 array.add(lowercase);
             }
             return array;
+        }
+    }
+
+    public static class German {
+        private static final Map<Integer, char[]> customGermanDictionary = Map.of(
+                (int) 'ä', "ae".toCharArray(),
+                (int) 'ö', "oe".toCharArray(),
+                (int) 'ü', "ue".toCharArray(),
+                (int) 'ß', "ss".toCharArray()
+        );
+
+        public static List<String> parseOutputs(String text) {
+            String lowercase = text.toLowerCase(Locale.ROOT);
+            String base = Common.simplifyGraphemes(text).toLowerCase(Locale.ROOT);
+            String parsed = text
+                    .toLowerCase(Locale.GERMAN)
+                    .codePoints()
+                    .flatMap(c -> {
+                        var arr = customGermanDictionary.get(c);
+                        return (arr == null) ? IntStream.of(c) : CharBuffer.wrap(arr).chars();
+                    })
+                    .collect(StringBuilder::new,
+                            StringBuilder::appendCodePoint,
+                            StringBuilder::append
+                    )
+                    .toString();
+            return text.equalsIgnoreCase(parsed) ? List.of(lowercase, base) : List.of(lowercase, base, parsed);
         }
     }
 
