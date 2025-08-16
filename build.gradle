@@ -66,7 +66,6 @@ unimined.minecraft {
     version project.minecraft_version
 
     mappings {
-        mojmap()
         intermediary()
         yarn project.mapping_version
 
@@ -146,7 +145,7 @@ dependencies {
     implementation "com.atilika.kuromoji:kuromoji-unidic:${project.kuromoji_version}"
     fabricImplementation(implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.32")
 
-    fabricModRuntimeOnly fabricApi.fabric(project.fabric_api_version)
+//    fabricModRuntimeOnly fabricApi.fabric(project.fabric_api_version)
     // EMI
 //    modImplementation "dev.emi:emi-xplat-intermediary:${project.emi_version}"
 //    fabricModRuntimeOnly "dev.emi:emi-fabric:${project.emi_version}"
@@ -163,15 +162,14 @@ dependencies {
     neoforgeImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
 //    fabricModRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     // JEI
-    modImplementation "maven.modrinth:jei:19.22.1.316-fabric"
-//    fabricModRuntimeOnly "maven.modrinth:jei:19.22.1.316-fabric"
+    modImplementation "maven.modrinth:jei:${project.jei_version}-fabric"
+//    fabricModRuntimeOnly "maven.modrinth:jei:${project.jei_version}-fabric"
 
     fabricImplementation(neoforgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
     fabricModImplementation fabricApi.fabricModule("fabric-api-base", project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-key-binding-api-v1", project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-resource-loader-v0", project.fabric_api_version)
-    fabricModImplementation "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
-    fabricInclude "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
+    fabricModImplementation "maven.modrinth:amecs-reborn:${project.amecs_version}"
     fabricInclude(neoforgeInclude("dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
     neoforgeInclude "io.github.llamalad7:mixinextras-neoforge:0.5.0"
 

@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 
 @Mod(LocalizedBrowser.MOD_ID)
 public class LocalizedBrowserForge {
-    public final Lazy<KeyBinding> changeLocale = Lazy.of(() ->new KeyBinding(
+    public final Lazy<KeyBinding> changeLocale = Lazy.of(() -> new KeyBinding(
             "key.localizedbrowser.locale",
             KeyConflictContext.GUI,
             KeyModifier.ALT,

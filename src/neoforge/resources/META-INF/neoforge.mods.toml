@@ -29,6 +29,6 @@ config="localizedbrowser-common.mixins.json"
 [[dependencies.localizedbrowser]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.0,)"
+versionRange = "[1.21.1,)"
 ordering = "NONE"
 side = "BOTH"
