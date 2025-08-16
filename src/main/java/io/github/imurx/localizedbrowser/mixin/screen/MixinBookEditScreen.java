@@ -1,6 +1,6 @@
 package io.github.imurx.localizedbrowser.mixin.screen;
 
-import io.github.imurx.localizedbrowser.util.IMEModeAccessor;
+import io.github.imurx.localizedbrowser.access.IMEModeAccessor;
 import io.github.imurx.localizedbrowser.util.SelectionManagerHelper;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;

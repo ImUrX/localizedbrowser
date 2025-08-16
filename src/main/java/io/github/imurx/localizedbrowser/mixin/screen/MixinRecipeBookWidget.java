@@ -3,7 +3,7 @@ package io.github.imurx.localizedbrowser.mixin.screen;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
-import io.github.imurx.localizedbrowser.util.IMEModeAccessor;
+import io.github.imurx.localizedbrowser.access.IMEModeAccessor;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
