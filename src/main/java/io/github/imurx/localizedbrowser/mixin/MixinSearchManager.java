@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @Mixin(SearchManager.class)
 public class MixinSearchManager {
     @WrapOperation(
-            method = {"method_60350", "method_60367"},
+            method = {"method_60361", "method_60350"},
             at = @At(value = "NEW", target = "net/minecraft/client/search/TextSearchProvider")
     )
     private static <T> TextSearchProvider<T> mapItemTooltip(Function<T, Stream<String>> textsGetter,
