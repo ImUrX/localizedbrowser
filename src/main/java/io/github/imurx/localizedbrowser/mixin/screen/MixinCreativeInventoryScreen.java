@@ -2,15 +2,13 @@ package io.github.imurx.localizedbrowser.mixin.screen;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import io.github.imurx.localizedbrowser.util.IMEModeAccessor;
-import io.github.imurx.localizedbrowser.util.IMETextFieldWidget;
+import io.github.imurx.localizedbrowser.access.IMEModeAccessor;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(CreativeInventoryScreen.class)
 public class MixinCreativeInventoryScreen {

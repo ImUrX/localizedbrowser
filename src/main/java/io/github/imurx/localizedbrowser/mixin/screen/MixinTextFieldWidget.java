@@ -3,7 +3,7 @@ package io.github.imurx.localizedbrowser.mixin.screen;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
-import io.github.imurx.localizedbrowser.util.IMEModeAccessor;
+import io.github.imurx.localizedbrowser.access.IMEModeAccessor;
 import io.github.imurx.localizedbrowser.util.UselessMath;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -28,6 +28,12 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
     @Unique
     public boolean betterlocale$imeMode = false;
 
+    @Unique
+    public boolean betterlocale$temporaryIme = false;
+
+    @Unique
+    public boolean betterlocale$chatScreen = false;
+
     @Shadow
     private int selectionEnd;
 
@@ -39,9 +45,25 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
     public boolean betterlocale$isIme() {
         return betterlocale$imeMode;
     }
+
     @Override
     public void betterlocale$setImeMode(boolean imeMode) {
         this.betterlocale$imeMode = imeMode;
+    }
+
+    @Override
+    public boolean betterlocale$isTemporaryIme() {
+        return betterlocale$temporaryIme;
+    }
+
+    @Override
+    public void betterlocale$setTemporaryIme(boolean temporaryIme) {
+        this.betterlocale$temporaryIme = temporaryIme;
+    }
+
+    @Override
+    public void betterlocale$setChatScreen(boolean chatScreen) {
+        betterlocale$chatScreen = chatScreen;
     }
 
     @Shadow
@@ -61,7 +83,9 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
     @Shadow
     public abstract boolean drawsBackground();
 
-    @Shadow @Final private TextRenderer textRenderer;
+    @Shadow
+    @Final
+    private TextRenderer textRenderer;
 
     @Inject(method = "moveCursor", at = @At("RETURN"))
     private void onMoveCursor(int offset, boolean shiftKeyPressed, CallbackInfo ci) {
@@ -72,7 +96,8 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
 
     @WrapMethod(method = "charTyped")
     private boolean onCharTyped(char chr, int modifiers, Operation<Boolean> original) {
-        if (!betterlocale$imeMode || LocalizedBrowser.getInstance().isPassthroughIme()) {
+        var locale = LocalizedBrowser.getInstance();
+        if (!betterlocale$imeMode || locale.isPassthroughIme()) {
             return original.call(chr, modifiers);
         }
 
@@ -83,7 +108,15 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
             int min = Math.min(start, end);
             betterlocale$sliceStart = Math.min(min, betterlocale$sliceStart);
         }
+        boolean wasEmpty = this.getText().isEmpty();
         if (!this.isActive() || !original.call(chr, modifiers)) return false;
+        // Detect if it's slash command and return if it is for now
+        if (betterlocale$chatScreen && locale.hasImeParser() && !locale.isPassthroughIme() && chr == '/' && wasEmpty) {
+            locale.togglePassthroughIme();
+            betterlocale$sliceStart = 0;
+            betterlocale$temporaryIme = true;
+            return true;
+        }
         // Check if we went back after typing for some reason
         int start = this.getCursor();
         int end = this.selectionEnd;
@@ -91,7 +124,7 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
         int max = Math.max(start, end);
         betterlocale$sliceStart = Math.min(min, betterlocale$sliceStart);
         // Slice from last sliceStart to the max cursor position
-        var text = LocalizedBrowser.getInstance().imeParser(this.getText().substring(betterlocale$sliceStart, max), min - betterlocale$sliceStart, max - betterlocale$sliceStart);
+        var text = locale.imeParser(this.getText().substring(betterlocale$sliceStart, max), min - betterlocale$sliceStart, max - betterlocale$sliceStart);
         this.setText(this.getText().substring(0, betterlocale$sliceStart) + text.text() + this.getText().substring(max));
         this.setSelectionStart(text.selection().getStart() + betterlocale$sliceStart);
         this.setSelectionEnd(text.selection().getEndInclusive() + betterlocale$sliceStart);
@@ -105,8 +138,19 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
         var locale = LocalizedBrowser.getInstance();
         if (locale.hasImeParser() && locale.changeLocale.get(UselessMath.packInt2Long(keyCode, scanCode))) {
             betterlocale$sliceStart = locale.togglePassthroughIme() ? 0 : this.getCursor();
+            betterlocale$temporaryIme = false;
             cir.setReturnValue(true);
             cir.cancel();
+        }
+    }
+
+    @Inject(method = "setText", at = @At("HEAD"))
+    private void onSetText(String text, CallbackInfo ci) {
+        var locale = LocalizedBrowser.getInstance();
+        if (betterlocale$chatScreen && locale.hasImeParser() && !locale.isPassthroughIme() && text.equals("/")) {
+            locale.togglePassthroughIme();
+            betterlocale$sliceStart = 0;
+            betterlocale$temporaryIme = true;
         }
     }
 
