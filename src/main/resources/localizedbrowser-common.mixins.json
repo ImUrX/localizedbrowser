@@ -11,6 +11,8 @@
     "controlling.MixinSearchableType",
     "emi.MixinEmiSearch",
     "emi.MixinEmiSearchWidget",
+    "jei.MixinElementPrefixParser",
+    "jei.MixinGuiTextFieldFilter",
     "screen.AccessorChatScreen",
     "screen.AccessorTextFieldWidget",
     "screen.MixinAbstractSignEditScreen",

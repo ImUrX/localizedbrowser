@@ -1,7 +1,5 @@
 package io.github.imurx.localizedbrowser.mixin.controlling;
 
-import com.blamejared.searchables.api.SearchableType;
-import com.blamejared.searchables.api.context.SearchContext;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
@@ -15,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Pseudo
-@Mixin(SearchableType.class)
+@Mixin(targets = "com.blamejared.searchables.api.SearchableType")
 public class MixinSearchableType<T> {
     // TODO: Make somehow Controlling have more than one string being compared for filtering
 //    @WrapOperation(

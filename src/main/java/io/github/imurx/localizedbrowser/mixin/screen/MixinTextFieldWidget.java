@@ -5,11 +5,13 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.imurx.localizedbrowser.LocalizedBrowser;
 import io.github.imurx.localizedbrowser.util.IMEModeAccessor;
 import io.github.imurx.localizedbrowser.util.UselessMath;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
+import net.minecraft.util.math.ColorHelper;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -58,6 +60,8 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
     public abstract boolean isVisible();
     @Shadow
     public abstract boolean drawsBackground();
+
+    @Shadow @Final private TextRenderer textRenderer;
 
     @Inject(method = "moveCursor", at = @At("RETURN"))
     private void onMoveCursor(int offset, boolean shiftKeyPressed, CallbackInfo ci) {
@@ -112,8 +116,8 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
             final int x1 = this.getX() + this.getWidth() - 8 - (this.drawsBackground() ? 2 : 0);
             final int x2 = this.getX() + this.getWidth() - (this.drawsBackground() ? 2 : 0);
             final int y1 = this.getY() + (this.drawsBackground() ? 2 : 0);
-            final int y2 = this.getY() + this.getHeight() - (this.drawsBackground() ? 2 : 1);
-            context.fill(x1, y1, x2, y2, Colors.RED);
+            final int y2 = this.getY() + (this.drawsBackground() ? this.getHeight() - 2 : this.textRenderer.fontHeight);
+            context.fill(x1, y1, x2, y2, ColorHelper.Argb.getArgb(125, 255, 0, 0));
         }
     }
 }

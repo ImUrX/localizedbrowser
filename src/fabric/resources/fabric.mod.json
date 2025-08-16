@@ -3,7 +3,7 @@
   "id": "localizedbrowser",
   "version": "${version}",
   "name": "Better Locale",
-  "description": "Let's you search without using any graphemes!",
+  "description": "Lets you search without using any graphemes!",
   "authors": [
     "ImUrX"
   ],

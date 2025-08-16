@@ -148,12 +148,12 @@ dependencies {
 
     fabricModRuntimeOnly fabricApi.fabric(project.fabric_api_version)
     // EMI
-    modImplementation "dev.emi:emi-xplat-intermediary:${project.emi_version}"
+//    modImplementation "dev.emi:emi-xplat-intermediary:${project.emi_version}"
 //    fabricModRuntimeOnly "dev.emi:emi-fabric:${project.emi_version}"
 //    neoforgeRuntimeOnly "dev.emi:emi-neoforge:${project.emi_version}"
     // Controlling
 //    modImplementation "maven.modrinth:controlling:${project.controlling_version}-fabric,${project.minecraft_version}"
-    modImplementation "maven.modrinth:searchables:1.0.5-fabric,${project.minecraft_version}"
+//    modImplementation "maven.modrinth:searchables:1.0.5-fabric,${project.minecraft_version}"
 //    fabricModRuntimeOnly "maven.modrinth:controlling:${project.controlling_version}-fabric,${project.minecraft_version}"
 //    fabricModRuntimeOnly "maven.modrinth:searchables:1.0.5-fabric,${project.minecraft_version}"
 //    neoforgeRuntimeOnly "maven.modrinth:controlling:${project.controlling_version}-neoforge,${project.minecraft_version}"
@@ -162,6 +162,9 @@ dependencies {
     modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     neoforgeImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
 //    fabricModRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    // JEI
+    modImplementation "maven.modrinth:jei:19.22.1.316-fabric"
+//    fabricModRuntimeOnly "maven.modrinth:jei:19.22.1.316-fabric"
 
     fabricImplementation(neoforgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
     fabricModImplementation fabricApi.fabricModule("fabric-api-base", project.fabric_api_version)
@@ -170,6 +173,7 @@ dependencies {
     fabricModImplementation "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
     fabricInclude "de.siphalor:amecsapi-1.20:1.5.6+mc1.20.2", { transitive = false }
     fabricInclude(neoforgeInclude("dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
+    neoforgeInclude "io.github.llamalad7:mixinextras-neoforge:0.5.0"
 
     neoforgeImplementation 'thedarkcolour:kotlinforforge-neoforge:5.9.0'
 }
