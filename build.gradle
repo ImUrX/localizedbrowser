@@ -24,7 +24,7 @@ java {
 
 sourceSets {
     fabric
-    neoforge
+//    neoforge
 }
 
 repositories {
@@ -110,29 +110,29 @@ unimined.minecraft(sourceSets.fabric) {
     defaultRemapJar = true
 }
 
-unimined.minecraft(sourceSets.neoforge) {
-    combineWith(sourceSets.main)
-
-    neoForge {
-        loader project.neoforge_version
-    }
-
-    minecraftRemapper.config {
-        // neoforge adds 1 conflict, where 2 interfaces have a method with the same name on yarn/mojmap,
-        // but the method has different names in the intermediary mappings.
-        // this is a conflict because they have a class that extends both interfaces.
-        // this shouldn't be a problem as long as named mappings don't make the name of those 2 methods different.
-        ignoreConflicts(true)
-    }
-
-//    mods {
-//        remap(configurations.neoforgeModImplementation) {
-//            namespace "mojmap"
-//        }
+//unimined.minecraft(sourceSets.neoforge) {
+//    combineWith(sourceSets.main)
+//
+//    neoForge {
+//        loader project.neoforge_version
 //    }
-
-    defaultRemapJar = true
-}
+//
+//    minecraftRemapper.config {
+//        // neoforge adds 1 conflict, where 2 interfaces have a method with the same name on yarn/mojmap,
+//        // but the method has different names in the intermediary mappings.
+//        // this is a conflict because they have a class that extends both interfaces.
+//        // this shouldn't be a problem as long as named mappings don't make the name of those 2 methods different.
+//        ignoreConflicts(true)
+//    }
+//
+////    mods {
+////        remap(configurations.neoforgeModImplementation) {
+////            namespace "mojmap"
+////        }
+////    }
+//
+//    defaultRemapJar = true
+//}
 
 dependencies {
     // we need this in main where it isn't by default
@@ -159,21 +159,21 @@ dependencies {
 //    neoforgeRuntimeOnly "maven.modrinth:searchables:1.0.5-neoforge,${project.minecraft_version}"
     // REI
     modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-    neoforgeImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
+//    neoforgeImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
 //    fabricModRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     // JEI
     modImplementation "maven.modrinth:jei:${project.jei_version}-fabric"
 //    fabricModRuntimeOnly "maven.modrinth:jei:${project.jei_version}-fabric"
 
-    fabricImplementation(neoforgeImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
+    fabricImplementation(implementation "dev.esnault.wanakana:wanakana-core:${project.wanakana_version}")
     fabricModImplementation fabricApi.fabricModule("fabric-api-base", project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-key-binding-api-v1", project.fabric_api_version)
     fabricModImplementation fabricApi.fabricModule("fabric-resource-loader-v0", project.fabric_api_version)
     fabricModImplementation "maven.modrinth:amecs-reborn:${project.amecs_version}"
-    fabricInclude(neoforgeInclude("dev.esnault.wanakana:wanakana-core:${project.wanakana_version}"))
-    neoforgeInclude "io.github.llamalad7:mixinextras-neoforge:0.5.0"
+    fabricInclude("dev.esnault.wanakana:wanakana-core:${project.wanakana_version}")
+//    neoforgeInclude "io.github.llamalad7:mixinextras-neoforge:0.5.0"
 
-    neoforgeImplementation 'thedarkcolour:kotlinforforge-neoforge:5.9.0'
+//    neoforgeImplementation 'thedarkcolour:kotlinforforge-neoforge:5.9.0'
 }
 
 processFabricResources {
@@ -184,17 +184,17 @@ processFabricResources {
     }
 }
 
-processNeoforgeResources {
-    inputs.property "version", project.version
-
-    filesMatching("META-INF/neoforge.mods.toml") {
-        expand "version": project.version
-    }
-}
+//processNeoforgeResources {
+//    inputs.property "version", project.version
+//
+//    filesMatching("META-INF/neoforge.mods.toml") {
+//        expand "version": project.version
+//    }
+//}
 
 //jar.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 compileFabricJava.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
-compileNeoforgeJava.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
+//compileNeoforgeJava.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 shadowJar.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 javadoc.dependsOn generateRuntimeDownloadResourceForRuntimeDownloadOnly, generateRuntimeDownloadResourceForRuntimeDownload
 
