@@ -45,6 +45,6 @@
   ],
   "depends": {
     "minecraft": ">=1.21.1",
-    "amecsapi": "*"
+    "amecs-reborn": "*"
   }
 }

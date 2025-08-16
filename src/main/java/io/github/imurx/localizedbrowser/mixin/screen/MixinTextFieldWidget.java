@@ -147,10 +147,16 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
     @Inject(method = "setText", at = @At("HEAD"))
     private void onSetText(String text, CallbackInfo ci) {
         var locale = LocalizedBrowser.getInstance();
-        if (betterlocale$chatScreen && locale.hasImeParser() && !locale.isPassthroughIme() && text.equals("/")) {
-            locale.togglePassthroughIme();
-            betterlocale$sliceStart = 0;
-            betterlocale$temporaryIme = true;
+        if (betterlocale$chatScreen && locale.hasImeParser()) {
+            if(!locale.isPassthroughIme() && text.startsWith("/")) {
+                locale.togglePassthroughIme();
+                betterlocale$sliceStart = 0;
+                betterlocale$temporaryIme = true;
+            } else if(betterlocale$temporaryIme && locale.isPassthroughIme() && !text.startsWith("/")) {
+                locale.togglePassthroughIme();
+                betterlocale$sliceStart = this.getCursor();
+                betterlocale$temporaryIme = false;
+            }
         }
     }
 
