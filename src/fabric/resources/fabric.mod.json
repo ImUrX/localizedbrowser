@@ -26,7 +26,7 @@
     "homepage": "https://github.com/imurx/localizedbrowser",
     "sources": "https://github.com/imurx/localizedbrowser",
     "issues": "https://github.com/imurx/localizedbrowser/issues",
-    "email": "urielfontan2002@gmail.com"
+    "email": "imurx@proton.me"
   },
   "license": "MIT OR Apache-2.0",
   "icon": "icon.png",
@@ -44,6 +44,7 @@
     "localizedbrowser-common.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.21.0"
+    "minecraft": ">=1.21.1",
+    "amecs-reborn": "*"
   }
 }
