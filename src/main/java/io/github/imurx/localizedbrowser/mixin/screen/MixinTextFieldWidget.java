@@ -161,7 +161,7 @@ public abstract class MixinTextFieldWidget extends ClickableWidget implements IM
             final int x2 = this.getX() + this.getWidth() - (this.drawsBackground() ? 2 : 0);
             final int y1 = this.getY() + (this.drawsBackground() ? 2 : 0);
             final int y2 = this.getY() + (this.drawsBackground() ? this.getHeight() - 2 : this.textRenderer.fontHeight);
-            context.fill(x1, y1, x2, y2, ColorHelper.Argb.getArgb(125, 255, 0, 0));
+            context.fill(x1, y1, x2, y2, ColorHelper.getArgb(125, 255, 0, 0));
         }
     }
 }
